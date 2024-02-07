@@ -1,9 +1,15 @@
-const { User } = require('../models');
+const User = require('../models/User');
 
 const createUser = async(req, res) => {
     try {
       // Create user using Sequelize model
-      const user = await User.create(req.body);
+        const existingUser = await User.findOne({ where: { email: process.env.USER_EMAIL } });
+        if (existingUser) {
+            console.log('User already exists.');
+            return;
+        }
+
+
       res.status(201).json(user);
     } catch (error) {
       res.status(400).json({ error: error.message });
