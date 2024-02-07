@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const sequelize = require('./connection');
 
-const User = sequelize.define('User', {
+const Users = sequelize.define('Users', {
   email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -16,8 +16,16 @@ const User = sequelize.define('User', {
   },
   lastName: {
     type: DataTypes.STRING,
-  }
+  },
+  account_created: {
+    type: DataTypes.DATE,
+    defaultValue: Sequelize.NOW,
+  },
+  account_updated: {
+    type: DataTypes.DATE,
+    defaultValue: Sequelize.NOW,
+  },
 
 });
 
-module.exports = User;
+module.exports = Users;

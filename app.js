@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const sequelize = require('./connection');
+const sequelize = require('connection');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
