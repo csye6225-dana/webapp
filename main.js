@@ -1,23 +1,21 @@
 // main.js
 const express = require('express');
 const bodyParser = require('body-parser');
-
 const sequelize = require('./connection');
 
 const app = express();
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.PORT || 8888;
 
-// Middleware to parse JSON bodies
 app.use(bodyParser.json());
 
-// Middleware to handle payload and method restrictions
+// Middleware to handle payload 
 app.use('/healthz', (req, res, next) => {
-    if (Object.keys(req.body).length > 0) {
+    if (req.headers['content-length'] > 0) {
         return res.status(400).header('Cache-Control', 'no-cache').send(); // Bad Request
       }
     if (req.method !== 'GET') {
     return res.status(405).header('Cache-Control', 'no-cache').send(); // Method Not Allowed
-  }
+    }
   
   next();
 });
