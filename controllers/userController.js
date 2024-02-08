@@ -19,8 +19,8 @@ const createUser = async (req, res) => {
 };
 
 
-const  updateUser = async (req, res) => {
-  const allowedFields = ['firstName', 'lastName', 'password'];
+const updateUser = async (req, res) => {
+  const allowedFields = ['username','firstName', 'lastName', 'password']; // Allowed fields for update
   const receivedFields = Object.keys(req.body);
   
   // Check if any received field is not in the allowed fields
@@ -31,13 +31,13 @@ const  updateUser = async (req, res) => {
   
   try {
     // Ensure the user can only update their own account information
-    if (req.user.username !== req.params.username) {
+    if (req.user.username !== req.body.username) {
       return res.status(403).json({ error: "You are not allowed to update another user's account information" });
     }
     
     // Update the user's account information
     const updatedUser = await User.update(req.body, {
-      where: { username: req.params.username },
+      where: { username: req.body.username },
       returning: true // Get the updated user object
     });
 
@@ -47,7 +47,7 @@ const  updateUser = async (req, res) => {
     }
 
     // Update the account_updated field
-    await User.update({ account_updated: new Date() }, { where: { username: req.params.username } });
+    await User.update({ account_updated: new Date() }, { where: { username: req.body.username } });
 
     // Return the updated user object
     res.json(updatedUser[1][0]);
@@ -55,7 +55,7 @@ const  updateUser = async (req, res) => {
     console.error('Error updating user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-  };
+};
 
 const getUser = async (req, res) => {
     res.status(200);

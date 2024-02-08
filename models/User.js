@@ -43,8 +43,6 @@ User.createUser = async function(userData) {
     // Hash the password before saving to the database
     const hashedPassword = await bcrypt.hash(userData.password, 15);
     userData.password = hashedPassword;
-    
-    // Create the user in the database
     const newUser = await User.create(userData);
 
     // exclude write-only in JSON output

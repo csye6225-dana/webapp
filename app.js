@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const bootstrap = require('./models/User');
 const app = express();
+const authenticateUser = require('./authMiddleware');
 const PORT = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
@@ -21,6 +22,7 @@ const initializeApp = async () => {
 
 // Middleware to handle payload 
 const userRouter = require('./routes/userRouters.js')
+app.use(authenticateUser);
 app.use('/v1', userRouter);
 
 // Run the server
