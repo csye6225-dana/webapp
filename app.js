@@ -1,8 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const bootstrap = require('./models/User');
-const app = express();
+const userRouter = require('./routes/userRouters.js');
 const authenticateUser = require('./authMiddleware');
+const app = express();
 const PORT = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
@@ -17,11 +18,9 @@ const initializeApp = async () => {
     console.error('Error initializing app:', error.message);
   }
 };
-
-// Middleware to handle payload 
-const userRouter = require('./routes/userRouters.js')
-
-// Apply authentication middleware only for GET and PUT requests
+// Attach user router
+app.use('/v1', userRouter);
+// Authentication middleware for GET and PUT request
 app.use('/v1', (req, res, next) => {
   if (req.method === 'GET' || req.method === 'PUT') {
     authenticateUser(req, res, next);
@@ -29,9 +28,11 @@ app.use('/v1', (req, res, next) => {
     next();
   }
 });
-
-// Attach user router
-app.use('/v1', userRouter);
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ error: 'Internal server error' });
+});
 
 // Run the server
 app.listen(PORT, async () => {

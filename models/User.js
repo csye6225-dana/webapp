@@ -2,7 +2,7 @@ const DataTypes = require('sequelize');
 const sequelize = require('../connection');
 const bcrypt = require('bcrypt');
 
-
+// Define User table
 const User = sequelize.define('User', {
   id:{
     type:DataTypes.STRING,
@@ -37,7 +37,7 @@ const User = sequelize.define('User', {
   timestamps:false
 });
 
-// Define a method to create a new user
+// Create a new user
 User.createUser = async function(userData) {
   try {
     // Hash the password before saving to the database
@@ -55,4 +55,13 @@ User.createUser = async function(userData) {
     throw new Error('Error creating user: ' + error.message);
   }
 };
+
+// Validate a password
+User.prototype.validPWD = async function(password){
+  return await bcrypt.compare(password, this.password);
+;}
+
+
+
+
 module.exports = User;

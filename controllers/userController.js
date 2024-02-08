@@ -37,7 +37,7 @@ const updateUser = async (req, res) => {
     
     // Update the user's account information
     const updatedUser = await User.update(req.body, {
-      where: { username: req.body.username },
+      where: { username: req.user.username },
       returning: true // Get the updated user object
     });
 
@@ -47,7 +47,7 @@ const updateUser = async (req, res) => {
     }
 
     // Update the account_updated field
-    await User.update({ account_updated: new Date() }, { where: { username: req.body.username } });
+    await User.update({ account_updated: new Date() }, { where: { username: req.user.username } });
 
     // Return the updated user object
     res.json(updatedUser[1][0]);
