@@ -6,20 +6,22 @@ const PORT = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
 
-// Middleware to handle payload 
-const userRouter = require('./routes/userRouters.js')
-
+// Initializing 
 const initializeApp = async () => {
   try {
-    // Sync or migrate the database
+    // Boostrapping
     await bootstrap.sync({ alter: true }); 
-
-    console.log('Database schema synchronized successfully.');
+    console.log('Boostrapping the Database successfully!');
   } catch (error) {
-    console.error('Error initializing app:', error.message);
+    console.error('Error for initializing app:\n', error.message);
   }
 };
 
+
+
+// Middleware to handle payload 
+const userRouter = require('./routes/userRouters.js')
+app.use('/users', userRouter);
 
 // Run the server
 app.listen(PORT, async () => {

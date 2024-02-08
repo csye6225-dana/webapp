@@ -18,7 +18,7 @@ const User = sequelize.define('User', {
     writeOnly: true,
     set(value) {
       // Hash the password before saving to the database
-      const hashedPassword = bcrypt.hashSync(value, 10);
+      const hashedPassword = bcrypt.hashSync(value, 15);
       this.setDataValue('password', hashedPassword);
     }
   },

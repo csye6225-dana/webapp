@@ -1,19 +1,20 @@
 const User = require('../models/User');
 
 const createUser = async(req, res) => {
-    try {
-      // Create user using Sequelize model
-        const existingUser = await User.findOne({ where: { email: process.env.USER_EMAIL } });
-        if (existingUser) {
-            console.log('User already exists.');
-            return;
-        }
-
-
-      res.status(201).json(user);
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+  const {email, pwd, fname, lname} = req.body;
+  try {
+    // Create user using Sequelize model
+    const existingUser = await User.findOne({ where: {email} });
+    if (existingUser) {
+      console.log('The email is already registered. Please use another one.');
+      return res.status(400).json({error: 'The email is already registered. Please use another one.'});
     }
+    const newUser = await User.createUser({email,pwd,fname,lname});
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error('Error creating new user', error);
+    res.status(500).json({ error: error.message });
+  }
 };
 
 const  updateUser = async (req, res) => {
@@ -22,8 +23,7 @@ const  updateUser = async (req, res) => {
   };
 
 const getUser = async (req, res) => {
-    // Fetch user using Sequelize model
-    // Handle errors and send appropriate responses
+    res.status(200);
 };
 
 module.exports = {
