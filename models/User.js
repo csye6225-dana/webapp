@@ -1,5 +1,7 @@
 const DataTypes = require('sequelize');
 const sequelize = require('../connection');
+const bcrypt = require('bcrypt');
+
 
 const User = sequelize.define('User', {
   id:{
@@ -46,5 +48,18 @@ const User = sequelize.define('User', {
       return values;
     }
 });
-
+// Define a method to create a new user
+User.createUser = async function(userData) {
+  try {
+    // Hash the password before saving to the database
+    const hashedPassword = await bcrypt.hash(userData.password, 15);
+    userData.password = hashedPassword;
+    
+    // Create the user in the database
+    const newUser = await User.create(userData);
+    return newUser;
+  } catch (error) {
+    throw new Error('Error creating user: ' + error.message);
+  }
+};
 module.exports = User;
