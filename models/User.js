@@ -5,11 +5,11 @@ const bcrypt = require('bcrypt');
 
 const User = sequelize.define('User', {
   id:{
-    type:DataTypes.INTEGER,
+    type:DataTypes.STRING,
     primaryKey: true,
-    autoIncrement: true
+    defaultValue: DataTypes.UUIDV4
   },
-  email: {
+  username: {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
@@ -18,11 +18,6 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
     writeOnly: true,
-    set(value) {
-      // Hash the password before saving to the database
-      const hashedPassword = bcrypt.hashSync(value, 15);
-      this.setDataValue('password', hashedPassword);
-    }
   },
   firstName: {
     type: DataTypes.STRING,
@@ -40,14 +35,8 @@ const User = sequelize.define('User', {
   }
 },{
   timestamps:false
-},{
-    // exclude write-only in JSON output
-    toJSON() {
-      const values = Object.assign({}, this.get());
-      delete values.password;
-      return values;
-    }
 });
+
 // Define a method to create a new user
 User.createUser = async function(userData) {
   try {
@@ -57,7 +46,13 @@ User.createUser = async function(userData) {
     
     // Create the user in the database
     const newUser = await User.create(userData);
-    return newUser;
+
+    // exclude write-only in JSON output
+    const otherInfo = Object.assign({}, newUser.get());
+    delete otherInfo.password;
+    return otherInfo;
+      
+    //return error;
   } catch (error) {
     throw new Error('Error creating user: ' + error.message);
   }

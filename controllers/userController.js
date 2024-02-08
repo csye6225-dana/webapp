@@ -1,15 +1,16 @@
 const User = require('../models/User');
 
+//when use Post, create a new user
 const createUser = async (req, res) => {
-  const { email, pwd, fname, lname } = req.body;
+  const {username, password, firstName, lastName } = req.body;
   try {
     // Create user using Sequelize model
-    const existingUser = await User.findOne({ where: { email } });
+    const existingUser = await User.findOne({ where: {username} });
     if (existingUser) {
-      console.log('The email is already registered. Please use another one.');
-      return res.status(400).json({ error: 'The email is already registered. Please use another one.' });
+      console.log(username, 'already exists. Please use another one.');
+      return res.status(400).json({ error: 'The email address already exists. Please use another one.' });
     }
-    const newUser = await User.createUser({ email, password: pwd, firstName: fname, lastName: lname });
+    const newUser = await User.createUser({username, password, firstName, lastName});
     res.status(201).json(newUser);
   } catch (error) {
     console.error('Error creating new user', error);

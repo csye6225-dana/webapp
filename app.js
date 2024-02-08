@@ -21,7 +21,7 @@ const initializeApp = async () => {
 
 // Middleware to handle payload 
 const userRouter = require('./routes/userRouters.js')
-app.use('/users', userRouter);
+app.use('/v1', userRouter);
 
 // Run the server
 app.listen(PORT, async () => {
