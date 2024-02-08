@@ -10,19 +10,27 @@ app.use(bodyParser.json());
 // Initializing 
 const initializeApp = async () => {
   try {
-    // Boostrapping
+    // Bootstrap the database
     await bootstrap.sync({ alter: true }); 
-    console.log('Boostrapping the Database successfully!');
+    console.log('Bootstrap the Database successfully!');
   } catch (error) {
-    console.error('Error for initializing app:\n', error.message);
+    console.error('Error initializing app:', error.message);
   }
 };
 
-
-
 // Middleware to handle payload 
 const userRouter = require('./routes/userRouters.js')
-app.use(authenticateUser);
+
+// Apply authentication middleware only for GET and PUT requests
+app.use('/v1', (req, res, next) => {
+  if (req.method === 'GET' || req.method === 'PUT') {
+    authenticateUser(req, res, next);
+  } else {
+    next();
+  }
+});
+
+// Attach user router
 app.use('/v1', userRouter);
 
 // Run the server
