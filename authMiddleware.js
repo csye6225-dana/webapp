@@ -28,7 +28,7 @@ const authenticateUser = async (req, res, next) => {
     next();
   } catch (error) {
     console.error('Authentication error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(error.status).json({ error: error.message });
   }
 };
 

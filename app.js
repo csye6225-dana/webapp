@@ -31,7 +31,7 @@ app.use('/v1', (req, res, next) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Error:', err);
-  res.status(500).json({ error: 'Internal server error' });
+  res.status(err.status).json({ error: err.message });
 });
 
 // Run the server
