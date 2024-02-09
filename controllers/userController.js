@@ -20,42 +20,38 @@ const createUser = async (req, res) => {
 
 
 const updateUser = async (req, res) => {
-  const allowedFields = ['username','firstName', 'lastName', 'password']; // Allowed fields for update
+  const allowedFields = ['username', 'firstName', 'lastName', 'password']; // Allowed fields for update
   const receivedFields = Object.keys(req.body);
-  
-  // Check if any received field is not in the allowed fields
   const invalidFields = receivedFields.filter(field => !allowedFields.includes(field));
+
   if (invalidFields.length > 0) {
     return res.status(400).json({ error: `Invalid field(s): ${invalidFields.join(', ')}` });
   }
   
   try {
-    // Ensure the user can only update their own account information
+    // Only update their own account information
     if (req.user.username !== req.body.username) {
       return res.status(403).json({ error: "You are not allowed to update another user's account information" });
     }
     
     // Update the user's account information
-    const updatedUser = await User.update(req.body, {
+    const [affectedRows, updatedUsers] = await User.update(req.body, {
       where: { username: req.user.username },
       returning: true // Get the updated user object
     });
 
-    // Check if any rows were affected by the update
-    if (updatedUser[0] === 0) {
+    // Check if affected 
+    if (affectedRows === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-
-    // Update the account_updated field
     await User.update({ account_updated: new Date() }, { where: { username: req.user.username } });
-
-    // Return the updated user object
-    res.json(updatedUser[1][0]);
+    return res.status(200).json({ result: "Successfully updated"});
   } catch (error) {
     console.error('Error updating user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 const getUser = async (req, res) => {
   try {
@@ -69,16 +65,10 @@ const getUser = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Remove sensitive information before sending the response
-    const userData = {
-      id: user.id,
-      username: user.username,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      account_created: user.account_created,
-      account_updated: user.account_updated
-    };
-    res.status(200).json(userData);
+    // Remove sensitive information
+    const otherInfo = Object.assign({}, user.get());
+    delete otherInfo.password;
+    return res.status(200).json(otherInfo);
   } catch (error) {
     console.error('Error fetching user:', error);
     res.status(500).json({ error: 'Internal server error' });

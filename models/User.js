@@ -21,9 +21,11 @@ const User = sequelize.define('User', {
   },
   firstName: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
   lastName: {
     type: DataTypes.STRING,
+    allowNull: false,
   },
   account_created: {
     type: DataTypes.DATE,
@@ -60,8 +62,6 @@ User.createUser = async function(userData) {
 User.prototype.validPWD = async function(password){
   return await bcrypt.compare(password, this.password);
 ;}
-
-
 
 
 module.exports = User;
