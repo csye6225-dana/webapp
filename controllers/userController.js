@@ -1,0 +1,84 @@
+const User = require('../models/User');
+
+//when use Post, create a new user
+const createUser = async (req, res) => {
+  const {username, password, firstName, lastName } = req.body;
+  try {
+    // Create user using Sequelize model
+    const existingUser = await User.findOne({ where: {username} });
+    if (existingUser) {
+      console.log(username, 'already exists. Please use another one.');
+      return res.status(400).json({ error: 'The email address already exists. Please use another one.' });
+    }
+    const newUser = await User.createUser({username, password, firstName, lastName});
+    res.status(201).json(newUser);
+  } catch (error) {
+    console.error('Error creating new user', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+const updateUser = async (req, res) => {
+  const allowedFields = ['username', 'firstName', 'lastName', 'password']; // Allowed fields for update
+  const receivedFields = Object.keys(req.body);
+  const invalidFields = receivedFields.filter(field => !allowedFields.includes(field));
+
+  if (invalidFields.length > 0) {
+    return res.status(400).json({ error: `Invalid field(s): ${invalidFields.join(', ')}` });
+  }
+  
+  try {
+    // Only update their own account information
+    if (req.user.username !== req.body.username) {
+      return res.status(403).json({ error: "You are not allowed to update another user's account information" });
+    }
+    
+    // Update the user's account information
+    const [affectedRows, updatedUsers] = await User.update(req.body, {
+      where: { username: req.user.username },
+      returning: true // Get the updated user object
+    });
+
+    // Check if affected 
+    if (affectedRows === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    await User.update({ account_updated: new Date() }, { where: { username: req.user.username } });
+    return res.status(200).json({ result: "Successfully updated"});
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+const getUser = async (req, res) => {
+  try {
+    if (req.body.username !== req.user.username) {
+      return res.status(403).json({ error: "You are not allowed to access another user's account information" });
+    }
+
+    // Fetch user data from the database
+    const user = await User.findOne({ where: { username: req.body.username } });
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Remove sensitive information
+    const otherInfo = Object.assign({}, user.get());
+    delete otherInfo.password;
+    return res.status(200).json(otherInfo);
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+module.exports = {
+    createUser,
+    updateUser,
+    getUser
+}
+
