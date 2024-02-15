@@ -1,23 +1,33 @@
-name: Test Application
+name: Application Health Check
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
 jobs:
-  test:
+  health_check:
     runs-on: ubuntu-latest
+
+    container:
+      image: centos:8
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        run: |
+          curl -fsSL https://rpm.nodesource.com/setup_14.x | bash -
+          yum install -y nodejs
 
       - name: Install dependencies
-        run: npm install
+        run: npm install express sequelize dotenv@8
 
-      - name: Run app.js script
-        run: node app.js &
+      - name: Initialize the app
+        run: |
+          node init
+          node app.js &
 
       - name: Wait for application to start
         run: sleep 10
