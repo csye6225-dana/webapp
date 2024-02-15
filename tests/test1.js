@@ -6,7 +6,8 @@ async function runIntegrationTests() {
     const createUserResponse = await axios.post('http://localhost:8080/v1/user', {
       username: 'testuser',
       password: 'testpassword',
-      name: 'Test User'
+      last_name: 'user lastname',
+      first_name: 'user firstname'
     });
 
     // Ensure account creation was successful
