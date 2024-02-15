@@ -3,11 +3,11 @@ const axios = require('axios');
 async function runIntegrationTests() {
   try {
     // Create an account
-    const createUserResponse = await axios.post('http://localhost:8080/v1/user', {
-      username: 'testuser',
-      password: 'testpassword',
-      last_name: 'user lastname',
-      first_name: 'user firstname'
+    const createUserResponse = await axios.post('http://localhost:8080/v1/user/self', {
+        "username": "testuser",
+        "password": "testpassword",
+        "lastName": "lastname",
+        "firstName": "firstname"
     });
 
     // Ensure account creation was successful
@@ -16,10 +16,10 @@ async function runIntegrationTests() {
     }
 
     // Retrieve user data with basic authentication
-    const getUserResponse = await axios.get('http://localhost:8080/v1/user', {
+    const getUserResponse = await axios.get('http://localhost:8080/v1/user/self', {
       auth: {
-        username: 'testuser',
-        password: 'testpassword'
+        "username": 'testuser',
+        "password": 'testpassword'
       }
     });
 
