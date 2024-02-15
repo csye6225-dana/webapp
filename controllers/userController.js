@@ -21,7 +21,7 @@ const createUser = async (req, res) => {
 
 
 const updateUser = async (req, res) => {
-  const allowedFields = ['username', 'firstName', 'lastName', 'password']; // Allowed fields for update
+  const allowedFields = ['firstName', 'lastName', 'password']; // Allowed fields for update
   const receivedFields = Object.keys(req.body);
   const invalidFields = receivedFields.filter(field => !allowedFields.includes(field));
 
@@ -29,10 +29,6 @@ const updateUser = async (req, res) => {
     return res.status(400).json({ error: `Invalid field(s): ${invalidFields.join(', ')}` });
   }
   try {
-    if (req.user.username !== req.body.username) {
-      return res.status(403).json({ error: "You are not allowed to update another user's account information" });
-    }
-    
     const user = await User.findOne({ where: { username: req.user.username } });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
