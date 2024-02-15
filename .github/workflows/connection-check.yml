@@ -47,10 +47,7 @@ jobs:
             EOF
 
       - name: Install packages
-        run: npm install express sequelize dotenv mysql2 bcrypt basic-auth
-
-      - name: Database Migrations
-        run: npm run migrate
+        run: npm install express sequelize dotenv mysql2 bcrypt basic-auth ci
         
       - name: Run the app
         run: node app.js 
