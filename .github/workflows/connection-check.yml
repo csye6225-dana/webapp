@@ -58,5 +58,13 @@ jobs:
             MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
             MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
 
-      - name: Wait for application to start
-        run: sleep 10 
+      # Check health endpoint
+      - name: Check /healthz endpoint
+        run: |
+          status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/healthz)
+          if [ $status_code -eq 200 ]; then
+            echo "Health check passed: status code is 200"
+          else
+            echo "Health check failed: status code is not 200"
+            exit 1
+          fi
