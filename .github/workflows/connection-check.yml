@@ -23,8 +23,7 @@ jobs:
 
       - name: Initialize the app
         run: |
-          node init
-          node app.js &
+          node app.js 
 
       - name: Wait for application to start
         run: sleep 10
