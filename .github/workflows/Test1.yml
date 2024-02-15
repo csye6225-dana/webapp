@@ -1,0 +1,71 @@
+name: Test1 Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      # Set up any necessary services for integration testing
+      mysql:
+        image: mysql:latest
+        env:
+            MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+    
+      # Write package.json content to a file
+      - name: Write package.json
+        run: |
+            cat << EOF > package.json
+            {
+                "name": "webapp",
+                "version": "1.0.0",
+                "description": "",
+                "main": "app.js",
+                "scripts": {
+                    "test": "echo \\"Error: no test specified\\" && exit 1"
+                },
+                "author": "Dana",
+                "license": "ISC"
+            }
+            EOF
+
+      - name: Install packages
+        run: npm install express sequelize dotenv mysql2 bcrypt basic-auth ci
+        
+      - name: Install jest
+        run: npm install axios jest @types/jest ts-jest ts-node @types/node
+
+      - name: Run the app
+        run: nohup node app.js &
+
+        env:
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            DB_NAME: ${{ secrets.DB_NAME }}
+            MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+            MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+
+      # Change directory to tests folder
+      - name: Change directory to tests folder
+        run: cd tests
+
+      # Run integration tests
+      - name: Run integration tests
+        run: node test1.js
