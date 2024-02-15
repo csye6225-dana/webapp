@@ -33,7 +33,7 @@ jobs:
                 "license": "ISC"
             }
             EOF
-    
+
       - name: Install packages
         run: npm install express sequelize dotenv mysql2 bcrypt basic-auth
 
