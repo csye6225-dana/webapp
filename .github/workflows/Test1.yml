@@ -48,9 +48,6 @@ jobs:
 
       - name: Install packages
         run: npm install express sequelize dotenv mysql2 bcrypt basic-auth ci
-        
-      - name: Install jest
-        run: npm install axios jest @types/jest ts-jest ts-node @types/node
 
       - name: Run the app
         run: nohup node app.js &

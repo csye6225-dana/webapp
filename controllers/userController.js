@@ -59,13 +59,12 @@ const updateUser = async (req, res) => {
 
 
 const getUser = async (req, res) => {
+  if (Object.keys(req.body).length > 0) {
+    return res.status(400).json({ error: 'No body payload allowed' });
+  }
   try {
-    if (req.body.username !== req.user.username) {
-      return res.status(403).json({ error: "You are not allowed to access another user's account information" });
-    }
-
     // Fetch user data from the database
-    const user = await User.findOne({ where: { username: req.body.username } });
+    const user = await User.findOne({ where: { username: req.user.username } });
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
