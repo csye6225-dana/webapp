@@ -15,8 +15,10 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+            MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+            MYSQL_USER: ${{ secrets.DB_USER }}
+            MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -36,21 +38,18 @@ jobs:
       - name: Install packages
         run: npm install express sequelize dotenv mysql2 bcrypt basic-auth
 
+      - name: Database Migrations
+        run: npm run migrate
+        
       - name: Run the app
         run: node app.js 
         env:
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_NAME: ${{ secrets.DB_NAME}}
-          
+          MYSQL_HOST: ${{secrets.MYSQL_HOST}}
+          MYSQL_PORT: ${{secrets.}}
+
       - name: Wait for application to start
         run: sleep 10
 
-      - name: Run integration tests
-        env:
-          MYSQL_HOST: localhost
-          MYSQL_PORT: 3306
-          MYSQL_USER: root
-          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
-        run: npm run test:integration

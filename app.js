@@ -6,6 +6,7 @@ const userRouter = require('./routes/userRouters.js');
 const checkHealthMiddleware = require('./middlewares/checkHealthMiddleware'); // Import checkHealthMiddleware
 const authenticateUser = require('./middlewares/authMiddleware.js');
 const app = express();
+
 const PORT = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
