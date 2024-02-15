@@ -50,7 +50,7 @@ jobs:
         run: npm install express sequelize dotenv mysql2 bcrypt basic-auth ci
         
       - name: Run the app
-        run: node app.js 
+        run: nohup node app.js 
         env:
             DB_USER: ${{ secrets.DB_USER }}
             DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
