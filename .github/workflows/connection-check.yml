@@ -31,19 +31,20 @@ jobs:
     
       # Write package.json content to a file
       - name: Write package.json
-        run: echo "${{ toJson(env.packageJson) }}" > package.json
-        env:
-            packageJson:  '{
-                    "name": "webapp",
-                    "version": "1.0.0",
-                    "description": "",
-                    "main": "app.js",
-                    "scripts": {
+        run: |
+            cat << EOF > package.json
+            {
+                "name": "webapp",
+                "version": "1.0.0",
+                "description": "",
+                "main": "app.js",
+                "scripts": {
                     "test": "echo \\"Error: no test specified\\" && exit 1"
-                    },
-                    "author": "Dana",
-                    "license": "ISC"
-                }'
+                },
+                "author": "Dana",
+                "license": "ISC"
+            }
+            EOF
 
       - name: Install packages
         run: npm install express sequelize dotenv mysql2 bcrypt basic-auth
