@@ -1,4 +1,4 @@
-name: Integration Tests
+name: Integration Tests1
 
 on:
   pull_request:
@@ -6,6 +6,7 @@ on:
       - main
 
 jobs:
+
   test:
     runs-on: ubuntu-latest
 
@@ -14,8 +15,8 @@ jobs:
       mysql:
         image: mysql:latest
         env:
-          MYSQL_ROOT_PASSWORD: root_password
-          MYSQL_DATABASE: test_db
+          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
         ports:
           - 3306:3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -32,13 +33,20 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Additional setup steps for the application (e.g., database migrations, environment setup)
+      - name: Install packages
+        run: npm install express sequelize dotenv mysql2 bcrypt basic-auth
 
+      - name: Run the app
+        run: node app.js 
+
+      - name: Wait for application to start
+        run: sleep 10
+        
       - name: Run integration tests
         env:
           MYSQL_HOST: localhost
           MYSQL_PORT: 3306
           MYSQL_USER: root
-          MYSQL_PASSWORD: root_password
-          MYSQL_DATABASE: test_db
+          MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          MYSQL_DATABASE: ${{ secrets.DB_NAME }}
         run: npm run test:integration
