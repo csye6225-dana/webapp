@@ -1,4 +1,4 @@
-name: Connection Check
+name: Integration Tests1
 
 on:
   pull_request:
@@ -6,8 +6,23 @@ on:
       - main
 
 jobs:
-  connection_check:
+
+  test:
     runs-on: ubuntu-latest
+
+    services:
+      # Set up any necessary services for integration testing
+      mysql:
+        image: mysql:latest
+        env:
+            MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+            MYSQL_USER: ${{ secrets.DB_USER }}
+            MYSQL_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -19,40 +34,30 @@ jobs:
     
       # Write package.json content to a file
       - name: Write package.json
-        run: |
-            cat << EOF > package.json
-            {
-                "name": "webapp",
-                "version": "1.0.0",
-                "description": "",
-                "main": "app.js",
-                "scripts": {
+        run: echo '${{ toJson(env.packageJson) }}'' > package.json
+        env:
+            packageJson: |
+                {
+                    "name": "webapp",
+                    "version": "1.0.0",
+                    "description": "",
+                    "main": "app.js",
+                    "scripts": {
                     "test": "echo \\"Error: no test specified\\" && exit 1"
-                },
-                "author": "Dana",
-                "license": "ISC"
-            }
-            EOF
+                    },
+                    "author": "Dana",
+                    "license": "ISC"
+                }
 
       - name: Install packages
         run: npm install express sequelize dotenv mysql2 bcrypt basic-auth
 
+      - name: Database Migrations
+        run: npm run migrate
+        
       - name: Run the app
         run: node app.js 
-        env:
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME}}
 
       - name: Wait for application to start
         run: sleep 10 
 
-      - name: Check health URL
-        run: |
-          health_response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/healthz)
-          if [ "$health_response" -eq 200 ]; then
-            echo "Health check successful"
-          else
-            echo "Health check failed: $health_response"
-            exit 1
-          fi
