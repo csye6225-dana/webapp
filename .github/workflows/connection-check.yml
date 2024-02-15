@@ -33,8 +33,7 @@ jobs:
       - name: Write package.json
         run: echo "${{ toJson(env.packageJson) }}" > package.json
         env:
-            packageJson: |
-                {
+            packageJson:  '{
                     "name": "webapp",
                     "version": "1.0.0",
                     "description": "",
@@ -44,7 +43,7 @@ jobs:
                     },
                     "author": "Dana",
                     "license": "ISC"
-                }
+                }'
 
       - name: Install packages
         run: npm install express sequelize dotenv mysql2 bcrypt basic-auth
