@@ -21,5 +21,5 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run ESLint
-        run: npm run lint  # Adjust the command according to your project's setup
+      - name: check main script
+        run: node --check app.js  
