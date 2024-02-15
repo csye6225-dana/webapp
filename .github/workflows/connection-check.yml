@@ -1,4 +1,4 @@
-name: Integration Tests1
+name: Connection Check
 
 on:
   pull_request:
@@ -6,7 +6,6 @@ on:
       - main
 
 jobs:
-
   test:
     runs-on: ubuntu-latest
 
@@ -32,7 +31,7 @@ jobs:
     
       # Write package.json content to a file
       - name: Write package.json
-        run: echo '${{ toJson(env.packageJson) }}'' > package.json
+        run: echo "${{ toJson(env.packageJson) }}" > package.json
         env:
             packageJson: |
                 {
@@ -64,4 +63,3 @@ jobs:
 
       - name: Wait for application to start
         run: sleep 10 
-
