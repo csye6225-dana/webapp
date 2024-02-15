@@ -1,4 +1,4 @@
-name: Application Health Check
+name: Connection Check
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  health_check:
+  connection_check:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,13 +17,19 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '14'
-
+          
+          
+      - name: Initalize the app
+        run: node init
+  
       - name: Install dependencies
-        run: npm install express sequelize dotenv@8
+        run: npm install
 
-      - name: Initialize the app
-        run: |
-          node app.js 
+      - name: Install packages
+        run: npm install express sequelize dotenv mysql2  
+
+      - name: Run the app
+        run: node app.js 
 
       - name: Wait for application to start
         run: sleep 10
