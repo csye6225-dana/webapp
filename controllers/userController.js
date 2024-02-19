@@ -3,19 +3,25 @@ const bcrypt = require('bcrypt');
 
 //when use Post, create a new user
 const createUser = async (req, res) => {
-  const {username, password, firstName, lastName } = req.body;
+  const { username, password, firstName, lastName } = req.body;
+
+  // Check if required fields are missing in request body
+  if (!username || !password || !firstName || !lastName) {
+    return res.status(400).json({ error: 'Missing required fields. Please provide username, password, firstName, and lastName.' });
+  }
+
   try {
     // Create user using Sequelize model
-    const existingUser = await User.findOne({ where: {username} });
+    const existingUser = await User.findOne({ where: { username } });
     if (existingUser) {
       console.log(username, 'already exists. Please use another one.');
-      return res.status(400).json({ error: 'The email address already exists. Please use another one.' });
+      return res.status(400).json({ error: 'The username already exists. Please use another one.' });
     }
-    const newUser = await User.createUser({username, password, firstName, lastName});
+    const newUser = await User.createUser({ username, password, firstName, lastName });
     res.status(201).json(newUser);
   } catch (error) {
     console.error('Error creating new user', error);
-    res.status(error.status).json({ error: error.message });
+    res.status(500).json({ error: 'Internal server error.' });
   }
 };
 

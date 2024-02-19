@@ -1,4 +1,4 @@
-const sequelize = require('../connection');
+const sequelize = require('../models/connection');
 
 const checkHealth = async (req, res) => {
   try {
