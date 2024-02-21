@@ -1,0 +1,30 @@
+name: Packer Validation
+
+on:
+  pull_request_target:
+    types: [opened]
+    branches:
+      - main
+
+jobs:
+  packer_validation:
+    name: Packer Template Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Install Packer
+        run: |
+          curl -O https://releases.hashicorp.com/packer/1.7.4/packer_1.7.4_linux_amd64.zip
+          unzip packer_1.7.4_linux_amd64.zip
+          sudo mv packer /usr/local/bin/
+          packer version
+
+      - name: Format Packer Template
+        run: packer fmt -check -diff
+        continue-on-error: true
+
+      - name: Validate Packer Template
+        run: packer validate <path/to/packer/template>

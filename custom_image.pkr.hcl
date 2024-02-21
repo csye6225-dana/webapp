@@ -2,38 +2,57 @@ packer {
   required_plugins {
     googlecompute = {
       source  = "github.com/hashicorp/googlecompute"
-      version = "~> 1"
+      version = ">= 1.0.0"
     }
   }
 }
 
-
 source "googlecompute" "centos_stream_8" {
-  project_id            = "csye6225-cloudcomputing"
+  project_id            = "cloudcomputing-415019"
   source_image_family   = "centos-stream-8"
-  account_file          = "/Users/Dana_G/Documents/Code/NEU/CloudComputing/tf-gcp-infra/credentials.json"
   zone                  = "us-central1-a"
-  ssh_username          = "root"
-  image_name            = "webapp"
-  image_description     = "Web server for portfolio web app."
-  image_storage_locations = ["us-central1"]
-
-  network               = "vpc-network1"
-  subnetwork            = "webapp1"
-  service_account_email = "829688566428-compute@developer.gserviceaccount.com"
+  ssh_username          = "centos"
+  image_name            = "centos-stream-8-custom2"
+  image_description     = "Custom image based on CentOS Stream 8."
+  image_family          = "centos-stream-8"
+  network               = "default"
+  tags                  = ["http-server"]
+  credentials_file      = "credentials.json"
 }
 
 build {
   sources = ["source.googlecompute.centos_stream_8"]
+  
+  # Cleanup any existing node_modules directory
+  provisioner "shell" {
+    inline = [
+      "rm -rf /tmp/webapp/node_modules"
+    ]
+  }
+  provisioner "file" {
+    source      =  "/Users/Dana_G/Documents/Code/NEU/CloudComputing/webapp"
+    destination = "/tmp/webapp"
+  }
 
   provisioner "shell" {
     inline = [
-      "mkdir -p /var/www/html",
-      "cp -r /Users/Dana_G/Documents/Code/NEU/CloudComputing/webapp /var/www/html",  # Copy your Node.js application to the desired location
-      "cd /var/www/html",
-      "npm install",  # Install Node.js dependencies
-      "npm install express sequelize dotenv mysql2 bcrypt basic-auth ci axios",
-      "nohup node app.js &"  # Run the Node.js application in the background
+      "cd /tmp/webapp",
+      "sudo yum install -y mysql-server",
+      "sudo systemctl start mysqld",
+      "sudo systemctl enable mysqld",
+      "sudo systemctl status mysqld",  # Verify MySQL service status
+      "if ! sudo mysql -e 'SELECT 1 FROM mysql.user WHERE User = \"root\"' | grep -q 1; then",
+      "  sudo mysql -e \"CREATE USER 'root'@'localhost' IDENTIFIED BY '1234567890';\"",
+      "  sudo mysql -e \"GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;\"",
+      "  sudo mysql -e \"FLUSH PRIVILEGES;\"",
+      "else",
+      "  sudo mysql -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY '1234567890';\"",
+      "fi",
+      "sudo yum install -y nodejs npm",  # Install Node.js and npm
+      "npm init -y", # Create package.json with defaults
+      "npm install express sequelize dotenv mysql2 bcrypt basic-auth ci axios"  # Install Node.js dependencies
     ]
   }
+
+
 }
