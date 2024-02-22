@@ -27,4 +27,4 @@ jobs:
         continue-on-error: true
 
       - name: Validate Packer Template
-        run: packer validate <path/to/packer/template>
+        run: packer validate custom_image.pkr.hcl

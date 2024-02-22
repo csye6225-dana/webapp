@@ -12,7 +12,7 @@ source "googlecompute" "centos_stream_8" {
   source_image_family   = "centos-stream-8"
   zone                  = "us-central1-a"
   ssh_username          = "centos"
-  image_name            = "centos-stream-8-custom2"
+  image_name            = "centos-stream-8-custom11"
   image_description     = "Custom image based on CentOS Stream 8."
   image_family          = "centos-stream-8"
   network               = "default"
@@ -22,7 +22,7 @@ source "googlecompute" "centos_stream_8" {
 
 build {
   sources = ["source.googlecompute.centos_stream_8"]
-  
+
   # Cleanup any existing node_modules directory
   provisioner "shell" {
     inline = [
@@ -30,7 +30,7 @@ build {
     ]
   }
   provisioner "file" {
-    source      =  "/Users/Dana_G/Documents/Code/NEU/CloudComputing/webapp"
+    source      =  "/Users/Dana_G/Downloads/webapp-04"
     destination = "/tmp/webapp"
   }
 
@@ -48,9 +48,10 @@ build {
       "else",
       "  sudo mysql -e \"ALTER USER 'root'@'localhost' IDENTIFIED BY '1234567890';\"",
       "fi",
+
       "sudo yum install -y nodejs npm",  # Install Node.js and npm
       "npm init -y", # Create package.json with defaults
-      "npm install express sequelize dotenv mysql2 bcrypt basic-auth ci axios"  # Install Node.js dependencies
+      "npm install --force express sequelize dotenv mysql2 bcrypt basic-auth ci axios"  # Install Node.js dependencies
     ]
   }
 
