@@ -1,0 +1,56 @@
+name: Build and Create Custom Image
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  build-and-create-image:
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.CREDENTIAL_GCP }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
+
+      - name: Run integration tests
+        run: node tests/test2.js
+
+      - name: Build Artifact
+        run: |
+          # Commands to build your application artifact
+          # For example, if it's a Node.js app, you might use 'npm run build' or 'npm run package'
+          npm run build
+
+      # Create local user csye6225
+      - name: Create local user
+        run: sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225
+
+      # Copy artifacts and configuration files, set ownership
+      - name: Copy artifacts and configuration files
+        run: |
+          sudo cp webapp.jar /tmp/webapp/
+          sudo cp -r config/* /tmp/webapp/
+          sudo chown -R csye6225:csye6225 /tmp/webapp
+
+
+      # Add systemd service file and configure it
+      - name: Configure systemd service
+        run: |
+          sudo cp systemd-service-file.service /etc/systemd/system/
+          sudo systemctl daemon-reload
+          sudo systemctl enable systemd-service-file.service
+
+      # Build custom image using Packer
+      - name: Build Custom Image
+        run: packer build custom_image.pkr.hcl
+

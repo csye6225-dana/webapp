@@ -1,0 +1,22 @@
+name: Packer Validation
+
+on:
+  pull_request_target:
+    types: [opened]
+    branches:
+      - main
+jobs:
+  validate-packer-template:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Run 'packer fmt' to format the Packer template
+      - name: Format Packer template
+        run: packer fmt .
+
+      # Run 'packer validate' to validate the Packer template
+      - name: Validate Packer template
+        run: packer validate custom_image.pkr.hcl
