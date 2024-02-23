@@ -163,5 +163,3 @@ dist
 #other
 *.json
 *.pem
-*.zip
-*.DS_Store

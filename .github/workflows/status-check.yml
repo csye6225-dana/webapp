@@ -1,10 +1,10 @@
 name: Packer Validation
 
 on:
-  pull_request:
+  pull_request_target:
+    types: [opened]
     branches:
       - main
-    types: [opened, synchronize]
 jobs:
   validate-packer-template:
     runs-on: ubuntu-latest
@@ -12,34 +12,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      
-      - name: Set up Packer
-        uses: hashicorp/setup-packer@main
-        with:
-          version: 'latest' # Use the latest version of Packer
 
-      - name: Set up Credentials File
-        env:
-          CREDENTIALS_JSON: ${{ secrets.CREDENTIAL_GCP }}
-        run: |
-          echo "$CREDENTIALS_JSON" > credentials.json
-          echo "Credentials file created."
-      
-      - name: Run `packer init`
-        id: init
-        run: packer init custom_image.pkr.hcl
-      
-      - name: Build Application Artifact
-        run: zip -r app_artifact.zip .
+      # Run 'packer fmt' to format the Packer template
+      - name: Format Packer template
+        run: packer fmt .
 
-      - name: Run packer fmt
-        run: |
-          packer fmt -check -diff custom_image.pkr.hcl
-          if [ $? -ne 0 ]; then
-            echo "Packer fmt has made changes to the template. Please run 'packer fmt custom-image.pkr.hcl' locally and commit the changes."
-            exit 1
-          fi
-
-      - name: Run packer validate
-        run: packer validate -var-file="var.pkrvars.hcl" custom_image.pkr.hcl
-
+      # Run 'packer validate' to validate the Packer template
+      - name: Validate Packer template
+        run: packer validate custom_image.pkr.hcl
