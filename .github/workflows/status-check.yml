@@ -12,7 +12,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
+      
+      - name: Install required plugins for Packer
+        run: packer init
+        
       # Run 'packer fmt' to format the Packer template
       - name: Format Packer template
         run: packer fmt .
