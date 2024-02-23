@@ -1,7 +1,7 @@
 name: Packer Validation
 
 on:
-  pull_request_target:
+  pull_request:
     types: [opened]
     branches:
       - main
@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+      
+      - name: Install plugins for Packer
+        run: packer init
 
       # Run 'packer fmt' to format the Packer template
       - name: Format Packer template
