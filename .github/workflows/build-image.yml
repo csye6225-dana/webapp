@@ -7,100 +7,50 @@ on:
       - main
 
 jobs:
-  build-artifact-image:
+  build-and-create-image:
     runs-on: ubuntu-latest
-    env:
-      MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      MYSQL_DATABASE: ${{ secrets.DB_NAME }}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        
-      - name: Install MySQL Server
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mysql-server
-          sudo systemctl start mysql.service
-  
-      - name: Configure MySQL
-        env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
-          MYSQL_USER: ${{ secrets.DB_USER }}
-          MYSQL_USER_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_DB_NAME: ${{ secrets.DB_NAME }} 
-        run: |
-          sudo mysql -e "CREATE USER '${MYSQL_USER}'@'localhost' IDENTIFIED BY '${MYSQL_USER_PASSWORD}';" -p"${MYSQL_ROOT_PASSWORD}"
-          sudo mysql -e "CREATE DATABASE \`${MYSQL_DB_NAME}\`;" -p"${MYSQL_ROOT_PASSWORD}"
-          sudo mysql -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DB_NAME}\`.* TO '${MYSQL_USER}'@'localhost';" -p"${MYSQL_ROOT_PASSWORD}"
-          sudo mysql -e "FLUSH PRIVILEGES;" -p"${MYSQL_ROOT_PASSWORD}"
-
-      - name: Check MySQL Service Status
-        run: |
-          sudo systemctl status mysql.service
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
         with:
-          node-version: '14'
-    
-      # Write package.json content to a file
-      - name: Write package.json
-        run: npm init -y
-        
-      - name: Install packages
-        run: npm install express sequelize dotenv mysql2 bcrypt basic-auth ci axios
+          credentials_json: '${{ secrets.CREDENTIAL_GCP }}'
 
-      - name: Run the app
-        run: nohup node app.js &
-        env:
-            DB_USER: ${{ secrets.DB_USER }}
-            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-            DB_NAME: ${{ secrets.DB_NAME }}
-            MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-            MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
 
-      # Run integration tests
-      - name: Run integration test 1
-        run: node tests/test1.js
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
 
-      # Run integration tests
-      - name: Run integration test 2
+      - name: Run integration tests
         run: node tests/test2.js
 
-      - name: Stop the app
+      - name: Build Artifact
         run: |
-          # Find the process ID of the Node.js application
-          PID=$(sudo lsof -t -i:${{secrets.MYSQL_PORT}}) 
-          
-          # Check if the process ID exists
-          if [ -n "$PID" ]; then
-            echo "Stopping Node.js application with PID $PID"
-            
-            # Terminate the Node.js application
-            sudo kill -9 $PID
-          else
-            echo "No Node.js application found running on port your_port_number"
-          fi
+          # Commands to build your application artifact
+          # For example, if it's a Node.js app, you might use 'npm run build' or 'npm run package'
+          npm run build
 
-      - name: Write GCP Credentials File
-        env:
-          CREDENTIALS_GCP: ${{ secrets.CREDENTIAL_GCP }}
-        run: |
-          echo "$CREDENTIALS_GCP" > credentials.json
+      # Create local user csye6225
+      - name: Create local user
+        run: sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225
 
-      - name: Set up Packer
-        uses: hashicorp/setup-packer@main
-        with:
-          version: 'latest'
-      
-      - name: Build Application Artifact
-        run:  zip -r app_artifact.zip .
-        working-directory: ${{ github.workspace }}
-          
-      - name: Run Packer to build custom image
+      # Copy artifacts and configuration files, set ownership
+      - name: Copy artifacts and configuration files
         run: |
-          cd ${{ github.workspace }}
-          ls ${{ github.workspace }}
-          packer init .
-          packer build -var-file="var.pkrvars.hcl" custom_image.pkr.hcl
+          sudo cp webapp.jar /tmp/webapp/
+          sudo cp -r config/* /tmp/webapp/
+          sudo chown -R csye6225:csye6225 /tmp/webapp
+
+
+      # Add systemd service file and configure it
+      - name: Configure systemd service
+        run: |
+          sudo cp systemd-service-file.service /etc/systemd/system/
+          sudo systemctl daemon-reload
+          sudo systemctl enable systemd-service-file.service
+
+      # Build custom image using Packer
+      - name: Build Custom Image
+        run: packer build custom_image.pkr.hcl
+
