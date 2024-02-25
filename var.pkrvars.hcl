@@ -1,4 +1,4 @@
-project_id          = "cyse6225-cloudcomputing-webapp"
+project_id          = "cloudcomputing-415019"
 source_image_family = "centos-stream-8"
 zone                = "us-central1-a"
 ssh_username        = "centos"
@@ -9,6 +9,5 @@ network             = "default"
 tags                = ["http-server"]
 credentials_file    = "credentials.json"
 
-source      = "app_artifact.zip"
+source      = "webapp.zip"
 destination = "/tmp/webapp.zip"
-app_location = "/opt/csye6225"
