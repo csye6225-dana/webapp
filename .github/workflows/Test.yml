@@ -1,4 +1,4 @@
-name: Integration Test Check
+name: Test1 Check
 
 on:
   pull_request:
@@ -61,11 +61,11 @@ jobs:
             MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
 
       # Run integration tests
-      - name: Run integration test 1
+      - name: Run integration tests
         run: node tests/test1.js
-
+        
       # Run integration tests
-      - name: Run integration test 2
+      - name: Run integration tests
         run: node tests/test2.js
 
 
