@@ -60,8 +60,6 @@ variable "app_location" {
   description = "Path to the application folder in image."
 }
 
-
-
 source "googlecompute" "centos_stream_8" {
   project_id          = var.project_id
   source_image_family = var.source_image_family
@@ -73,6 +71,7 @@ source "googlecompute" "centos_stream_8" {
   network             = var.network
   tags                = var.tags
   credentials_file    = var.credentials_file
+
 }
 
 
