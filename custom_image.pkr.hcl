@@ -7,7 +7,7 @@ packer {
   }
 }
 
-variable "project_id"   {
+variable "project_id" {
   type        = string
   description = "The GCP project ID."
 }
@@ -61,7 +61,7 @@ variable "app_location" {
 }
 
 source "googlecompute" "centos_stream_8" {
-  project_id          = var.project_id
+  project_id          = var.project_i
   source_image_family = var.source_image_family
   zone                = var.zone
   ssh_username        = var.ssh_username
