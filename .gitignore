@@ -17,7 +17,14 @@
 /node_modules/
 .env
 
-
+# Python dependencies
+__pycache__/
+*.pyc
+*.pyo
+*.pyc/
+*.pyo/
+venv/
+*.venv/
 
 # Maven dependencies
 target/
@@ -155,6 +162,10 @@ dist
 
 #other
 *.json
+<<<<<<< HEAD
 *.pem
 *.zip
 *.DS_Store
+=======
+*.pem
+>>>>>>> e36852d (04 (#38))
