@@ -2,7 +2,8 @@ name: Integration Test Check
 
 on:
   pull_request:
-  
+    branches:
+      - main
     types: [opened, synchronize]
 
 jobs:
