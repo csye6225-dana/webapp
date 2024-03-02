@@ -15,3 +15,5 @@ npm install dotenv@8
 # initialize the app
 node init
 node app.js
+
+# using GCP to run the app
