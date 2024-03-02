@@ -1,16 +1,16 @@
 name: Integration Test Check
 
 on:
-  pull_request_target:
-    branches:
-      - main
+  pull_request:
+  
     types: [opened, synchronize]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+      MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      MYSQL_DATABASE: ${{ secrets.DB_NAME }}
 
     steps:
       - name: Checkout code
@@ -29,9 +29,9 @@ jobs:
           MYSQL_USER_PASSWORD: ${{ secrets.DB_PASSWORD }}
           MYSQL_DB_NAME: ${{ secrets.DB_NAME }} 
         run: |
-          sudo mysql -e "CREATE USER ${MYSQL_USER}@'localhost' IDENTIFIED BY '${MYSQL_USER_PASSWORD}';" -p"${MYSQL_ROOT_PASSWORD}"
-          sudo mysql -e "CREATE DATABASE ${MYSQL_DB_NAME};" -p"${MYSQL_ROOT_PASSWORD}"
-          sudo mysql -e "GRANT ALL PRIVILEGES ON ${MYSQL_DB_NAME}.* TO '${MYSQL_USER}'@'localhost';" -p"${MYSQL_ROOT_PASSWORD}"
+          sudo mysql -e "CREATE USER '${MYSQL_USER}'@'localhost' IDENTIFIED BY '${MYSQL_USER_PASSWORD}';" -p"${MYSQL_ROOT_PASSWORD}"
+          sudo mysql -e "CREATE DATABASE \`${MYSQL_DB_NAME}\`;" -p"${MYSQL_ROOT_PASSWORD}"
+          sudo mysql -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DB_NAME}\`.* TO '${MYSQL_USER}'@'localhost';" -p"${MYSQL_ROOT_PASSWORD}"
           sudo mysql -e "FLUSH PRIVILEGES;" -p"${MYSQL_ROOT_PASSWORD}"
 
       - name: Check MySQL Service Status
@@ -53,12 +53,11 @@ jobs:
       - name: Run the app
         run: nohup node app.js &
         env:
-          PORT: ${{ secrets.PORT }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }} 
-          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            DB_NAME: ${{ secrets.DB_NAME }}
+            MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+            MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
 
       # Run integration tests
       - name: Run integration test 1
