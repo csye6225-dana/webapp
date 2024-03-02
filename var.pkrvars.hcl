@@ -9,6 +9,7 @@ network             = "default"
 tags                = ["http-server"]
 credentials_file    = "credentials.json"
 
+
 source      = "app_artifact.zip"
 destination = "/tmp/webapp.zip"
 app_location = "/opt/csye6225"
