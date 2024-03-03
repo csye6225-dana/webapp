@@ -59,6 +59,12 @@ variable "app_location" {
   type        = string
   description = "Path to the application folder in image."
 }
+variable "mysql_root_password" {
+  type        = string
+  description = "Install mysql server"
+}
+
+
 
 source "googlecompute" "centos_stream_8" {
   project_id          = var.project_id
