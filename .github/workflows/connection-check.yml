@@ -9,7 +9,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-      
+    env:
+      MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+      MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
