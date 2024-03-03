@@ -56,7 +56,7 @@ jobs:
         env:
             DB_USER: ${{ secrets.DB_USER }}
             DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-            DB_NAME: ${{ secrets.DB_NAME }}
+            DB_NAME: ${{ secrets.DB_NAME }} 
             MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
             MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
 
