@@ -12,7 +12,6 @@ jobs:
     env:
       MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
       
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
