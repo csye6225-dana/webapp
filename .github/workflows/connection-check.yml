@@ -3,7 +3,7 @@ name: Connection Check
 on:
   pull_request_target:
     branches:
-      - master
+      - main
     types: [opened, synchronize]
 
 jobs:
@@ -22,7 +22,6 @@ jobs:
 
       - name: Set up MySQL
         env:
-          MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
           MYSQL_USER: ${{ secrets.DB_USER }}
           MYSQL_USER_PASSWORD: ${{ secrets.DB_PASSWORD }}
           MYSQL_DB_NAME: ${{ secrets.DB_NAME }} 
