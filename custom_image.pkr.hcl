@@ -59,7 +59,7 @@ variable "app_location" {
   type        = string
   description = "Path to the application folder in image."
 }
-variable "mysql_root_password" {
+variable "DB_PASSWORD" {
   type        = string
   description = "Install mysql server"
 }
@@ -96,7 +96,7 @@ build {
       "sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225",
       "sudo yum install -y mysql-server",
       "sudo systemctl start mysql",
-      "sudo mysql_secure_installation  <<< '${var.mysql_root_password}'",
+   
 
       "sudo yum install -y unzip",
       "sudo mkdir -p ${var.app_location}",
