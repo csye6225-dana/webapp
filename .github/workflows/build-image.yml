@@ -9,9 +9,6 @@ on:
 jobs:
   build-artifact-image:
     runs-on: ubuntu-latest
-    env:
-      MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      MYSQL_DATABASE: ${{ secrets.DB_NAME }}
 
     steps:
       - name: Checkout code
