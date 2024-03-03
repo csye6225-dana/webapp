@@ -1,13 +1,13 @@
-name: Build and Create Custom Image
+name: Integration Test Check
 
 on:
   pull_request:
-    types: [closed]
     branches:
       - main
+    types: [opened, synchronize]
 
 jobs:
-  build-artifact-image:
+  test:
     runs-on: ubuntu-latest
     env:
       MYSQL_ROOT_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -68,39 +68,4 @@ jobs:
       - name: Run integration test 2
         run: node tests/test2.js
 
-      - name: Stop the app
-        run: |
-          # Find the process ID of the Node.js application
-          PID=$(sudo lsof -t -i:${{secrets.MYSQL_PORT}}) 
-          
-          # Check if the process ID exists
-          if [ -n "$PID" ]; then
-            echo "Stopping Node.js application with PID $PID"
-            
-            # Terminate the Node.js application
-            sudo kill -9 $PID
-          else
-            echo "No Node.js application found running on port your_port_number"
-          fi
 
-      - name: Write GCP Credentials File
-        env:
-          CREDENTIALS_GCP: ${{ secrets.CREDENTIAL_GCP }}
-        run: |
-          echo "$CREDENTIALS_GCP" > credentials.json
-
-      - name: Set up Packer
-        uses: hashicorp/setup-packer@main
-        with:
-          version: 'latest'
-      
-      - name: Build Application Artifact
-        run:  zip -r app_artifact.zip .
-        working-directory: ${{ github.workspace }}
-          
-      - name: Run Packer to build custom image
-        run: |
-          cd ${{ github.workspace }}
-          ls ${{ github.workspace }}
-          packer init .
-          packer build -var-file="var.pkrvars.hcl" custom_image.pkr.hcl

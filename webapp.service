@@ -1,0 +1,13 @@
+[Unit]
+Description=Web Application Service
+After=network.target
+
+[Service]
+User=csye6225
+Group=csye6225
+WorkingDirectory=/opt/csye6225
+ExecStart=node app.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
