@@ -91,12 +91,12 @@ build {
       "sudo yum install -y mysql-server",
       "sudo systemctl start mysql",
       "sudo mysql_secure_installation  <<< '${var.mysql_root_password}'",
-     
+
       "sudo yum install -y unzip",
       "sudo mkdir -p ${var.app_location}",
       "sudo chown -R csye6225:csye6225 ${var.app_location}",
       "sudo unzip -o ${var.destination} -d ${var.app_location}",
-      
+
       "sudo cp ${var.app_location}/webapp.service /etc/systemd/system/webapp.service",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable webapp.service",
