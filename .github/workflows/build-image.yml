@@ -9,8 +9,6 @@ on:
 jobs:
   build-artifact-image:
     runs-on: ubuntu-latest
-    env:
-      MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
 
     steps:
       - name: Checkout code
@@ -21,27 +19,29 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mysql-server
           sudo systemctl start mysql.service
-  
+
       - name: Configure MySQL
         env:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
           MYSQL_USER: ${{ secrets.DB_USER }}
           MYSQL_USER_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_DB_NAME: ${{ secrets.DB_NAME }} 
+          MYSQL_DB_NAME: ${{secrets.DB_NAME}}
         run: |
-          sudo mysql -e "CREATE USER ${MYSQL_USER}@'localhost' IDENTIFIED BY '${MYSQL_USER_PASSWORD}';" -p"${MYSQL_ROOT_PASSWORD}"
-          sudo mysql -e "CREATE DATABASE ${MYSQL_DB_NAME};" -p"${MYSQL_ROOT_PASSWORD}"
-          sudo mysql -e "GRANT ALL PRIVILEGES ON ${MYSQL_DB_NAME}.* TO '${MYSQL_USER}'@'localhost';" -p"${MYSQL_ROOT_PASSWORD}"
-          sudo mysql -e "FLUSH PRIVILEGES;" -p"${MYSQL_ROOT_PASSWORD}"
+          mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "\
+            CREATE USER '${MYSQL_USER}'@'localhost' IDENTIFIED BY '${MYSQL_USER_PASSWORD}'; \
+            CREATE DATABASE \`${MYSQL_DB_NAME}\`; \
+            GRANT ALL PRIVILEGES ON \`${MYSQL_DB_NAME}\`.* TO '${MYSQL_USER}'@'localhost'; \
+            FLUSH PRIVILEGES;"
+
 
       - name: Check MySQL Service Status
         run: |
           sudo systemctl status mysql.service
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
-          node-version: 18.17.0
+          node-version: '14'
     
       # Write package.json content to a file
       - name: Write package.json
@@ -53,12 +53,11 @@ jobs:
       - name: Run the app
         run: nohup node app.js &
         env:
-          PORT: ${{ secrets.PORT }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }} 
-          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            DB_NAME: ${{ secrets.DB_NAME }}
+            MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+            MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
 
       # Run integration tests
       - name: Run integration test 1
@@ -94,6 +93,10 @@ jobs:
           CREDENTIALS_GCP: ${{ secrets.CREDENTIAL_GCP }}
         run: |
           echo "$CREDENTIALS_GCP" > credentials.json
+
+      - name: Assign MySQL Root Password
+        run: |
+          echo "::set-env name=mysql_root_password::${{ secrets.DB_ROOT_PASSWORD }}"
       
       - name: Build Application Artifact
         run:  zip -r app_artifact.zip .
@@ -102,6 +105,6 @@ jobs:
       - name: Run Packer to build custom image
         run: |
           cd ${{ github.workspace }}
-          ls -a
+          ls ${{ github.workspace }}
           packer init .
           packer build -var-file="var.pkrvars.hcl" custom_image.pkr.hcl

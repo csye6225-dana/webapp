@@ -3,20 +3,13 @@ name: Connection Check
 on:
   pull_request_target:
     branches:
-      - master
+      - main
     types: [opened, synchronize]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
-      MYSQL_USER: ${{secrets.DB_USER}}
-      MYSQL_PASSWORD: ${{secrets.DB_PASSWORD}}
-      MYSQL_DATABASE: ${{secrets.DB_NAME}}
-      MYSQL_HOST: ${{secrets.MYSQL_HOST}}
-      MYSQL_PORT: ${{secrets.MYSQL_PORT}}
-
+      
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -32,13 +25,14 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
           MYSQL_USER: ${{ secrets.DB_USER }}
           MYSQL_USER_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_DB_NAME: ${{ secrets.DB_NAME }}
+          MYSQL_DB_NAME: ${{secrets.DB_NAME}}
         run: |
-          sudo mysql -e "CREATE USER ${MYSQL_USER}@'localhost' IDENTIFIED BY '${MYSQL_USER_PASSWORD}';" -p"${MYSQL_ROOT_PASSWORD}"
-          sudo mysql -e "CREATE DATABASE ${MYSQL_DB_NAME};" -p"${MYSQL_ROOT_PASSWORD}"
-          sudo mysql -e "GRANT ALL PRIVILEGES ON ${MYSQL_DB_NAME}.* TO '${MYSQL_USER}'@'localhost';" -p"${MYSQL_ROOT_PASSWORD}"
-          sudo mysql -e "FLUSH PRIVILEGES;" -p"${MYSQL_ROOT_PASSWORD}"
-        
+          mysql -u root -p"${MYSQL_ROOT_PASSWORD}" -e "\
+            CREATE USER '${MYSQL_USER}'@'localhost' IDENTIFIED BY '${MYSQL_USER_PASSWORD}'; \
+            CREATE DATABASE \`${MYSQL_DB_NAME}\`; \
+            GRANT ALL PRIVILEGES ON \`${MYSQL_DB_NAME}\`.* TO '${MYSQL_USER}'@'localhost'; \
+            FLUSH PRIVILEGES;"
+
 
       - name: Check MySQL Service Status
         run: |
@@ -55,24 +49,19 @@ jobs:
 
       - name: Install packages
         run: npm install express sequelize dotenv mysql2 bcrypt basic-auth ci
-      
-      - name: Print PORT secret
-        run: echo ${{ secrets.PORT }}  
-
+        
       - name: Run the app
         run: nohup node app.js &
         env:
-          PORT: ${{ secrets.PORT }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }} 
-          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
-            
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            DB_NAME: ${{ secrets.DB_NAME }}
+            MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+            MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
 
       - name: Check /healthz endpoint
         run: |
-              status_code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8080/healthz)
+              status_code=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080/healthz)
               if [ "$status_code" -eq 200 ]; then
                 echo "Health check passed: status code is 200"
               else
