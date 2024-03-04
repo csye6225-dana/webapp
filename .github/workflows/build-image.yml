@@ -36,7 +36,6 @@ jobs:
             GRANT ALL PRIVILEGES ON \`${MYSQL_DB_NAME}\`.* TO '${MYSQL_USER}'@'localhost'; \
             FLUSH PRIVILEGES;"
 
-
       - name: Check MySQL Service Status
         run: |
           sudo systemctl status mysql.service
