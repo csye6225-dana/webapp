@@ -93,7 +93,7 @@ build {
 
       "sudo yum install -y unzip",
       "curl -fsSL https://rpm.nodesource.com/setup_14.x | sudo bash -",
-      "sudo yum install -y nodejs"
+      "sudo yum install -y nodejs",
       "sudo mkdir -p ${var.app_location}",
       "sudo chown -R csye6225:csye6225 ${var.app_location}",
       "sudo unzip -o ${var.destination} -d ${var.app_location}",
