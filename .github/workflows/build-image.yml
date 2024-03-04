@@ -42,7 +42,8 @@ jobs:
 
       - name: Install Node.js
         run: |
-          sudo apt install nodejs
+          sudo apt-get update
+          sudo apt-get install -y nodejs npm
     
       # Write package.json content to a file
       - name: Write package.json
