@@ -92,7 +92,7 @@ build {
       "sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225",
 
       "sudo yum install -y unzip",
-      "sudo apt-get install -y nodejs npm",
+      "sudo yum install -y nodejs",
       "sudo mkdir -p ${var.app_location}",
       "sudo chown -R csye6225:csye6225 ${var.app_location}",
       "sudo unzip -o ${var.destination} -d ${var.app_location}",
