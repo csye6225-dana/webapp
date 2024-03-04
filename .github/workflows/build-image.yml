@@ -12,7 +12,7 @@ jobs:
     env:
       MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
       MYSQL_DATABASE: ${{ secrets.DB_NAME }}
-      
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -96,10 +96,6 @@ jobs:
           CREDENTIALS_GCP: ${{ secrets.CREDENTIAL_GCP }}
         run: |
           echo "$CREDENTIALS_GCP" > credentials.json
-
-      - name: Assign MySQL Root Password
-        run: |
-          echo "::set-env name=mysql_root_password::${{ secrets.DB_ROOT_PASSWORD }}"
       
       - name: Build Application Artifact
         run:  zip -r app_artifact.zip .
