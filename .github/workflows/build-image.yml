@@ -36,14 +36,14 @@ jobs:
             GRANT ALL PRIVILEGES ON \`${MYSQL_DB_NAME}\`.* TO '${MYSQL_USER}'@'localhost'; \
             FLUSH PRIVILEGES;"
 
+
       - name: Check MySQL Service Status
         run: |
           sudo systemctl status mysql.service
 
       - name: Install Node.js
         run: |
-          sudo apt-get update
-          sudo apt-get install -y nodejs npm
+          sudo apt install nodejs
     
       # Write package.json content to a file
       - name: Write package.json
