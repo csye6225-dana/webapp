@@ -155,10 +155,6 @@ dist
 
 #other
 *.json
-<<<<<<< HEAD
 *.pem
 *.zip
 *.DS_Store
-=======
-*.pem
->>>>>>> e36852d (04 (#38))
