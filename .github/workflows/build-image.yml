@@ -41,10 +41,9 @@ jobs:
         run: |
           sudo systemctl status mysql.service
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
+      - name: Install Node.js
+        run: |
+          sudo yum install -y nodejs
     
       # Write package.json content to a file
       - name: Write package.json
