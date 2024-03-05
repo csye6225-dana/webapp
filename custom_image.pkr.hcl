@@ -110,7 +110,7 @@ build {
         DB_PASSWORD=\"XtkEfj!}%}Z0Ucr4\"
         MYSQL_HOST=\"10.63.0.2\"
         MYSQL_PORT=\"3306\"
-    EOT",
+      EOT",
       "sudo cp ${var.app_location}/webapp.service /etc/systemd/system/webapp.service",
       "sudo systemctl daemon-reload"
     ]
