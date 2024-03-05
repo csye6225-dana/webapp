@@ -7,19 +7,7 @@ Requires=google_metadata_script.service
 User=csye6225
 Group=csye6225
 WorkingDirectory=/opt/csye6225
-ExecStart=/bin/bash -c 'cat <<EOT > /opt/csye6225/.env &&
-      DB_NAME="${google_sql_database.database.name}"
-      DB_USER="${google_sql_user.users.name}"
-      DB_PASSWORD="${google_sql_user.users.password}"
-      MYSQL_HOST="127.0.0.1"
-      MYSQL_PORT="3306"
-      EOT
-      systemctl start mysqld
-      until mysqladmin ping -h localhost --silent; do
-          sleep 1
-      done
-      node app.js'
-
+ExecStart=/usr/bin/node app.js
 Restart=on-failure
 
 [Install]
