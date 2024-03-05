@@ -13,13 +13,12 @@ ExecStart=/bin/bash -c 'cat <<EOT > /opt/csye6225/.env &&
       DB_PASSWORD="${google_sql_user.users.password}"
       MYSQL_HOST="127.0.0.1"
       MYSQL_PORT="3306"
-      EOT
-      systemctl start mysqld
+      EOT &&
+      systemctl start mysql &&
       until mysqladmin ping -h localhost --silent; do
           sleep 1
-      done
+      done &&
       node app.js'
-
 Restart=on-failure
 
 [Install]
