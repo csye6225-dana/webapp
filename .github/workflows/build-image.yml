@@ -107,6 +107,6 @@ jobs:
       - name: Run Packer to build custom image
         run: |
           cd ${{ github.workspace }}
-          ls ${{ github.workspace }}
+          ls -a
           packer init .
           packer build -var-file="var.pkrvars.hcl" custom_image.pkr.hcl
