@@ -104,13 +104,13 @@ build {
       "sudo mkdir -p ${var.app_location}",
       "sudo chown -R csye6225:csye6225 ${var.app_location}",
       "sudo unzip -o ${var.destination} -d ${var.app_location}",
-      "cat <<EOT > /opt/csye6225/.env &&
-        DB_NAME=\"webapp\"
-        DB_USER=\"$webapp\"
-        DB_PASSWORD=\"XtkEfj!}%}Z0Ucr4\"
-        MYSQL_HOST=\"10.63.0.2\"
-        MYSQL_PORT=\"3306\"
-      EOT",
+      "cat <<EOT > /opt/csye6225/.env &&",
+      "  DB_NAME=\"webapp\"",
+      "  DB_USER=\"$webapp\"",
+      "  DB_PASSWORD=\"XtkEfj!}%}Z0Ucr4\"",
+      "  MYSQL_HOST=\"10.63.0.2\"",
+      "  MYSQL_PORT=\"3306\"",
+      "EOT",
       "sudo cp ${var.app_location}/webapp.service /etc/systemd/system/webapp.service",
       "sudo systemctl daemon-reload"
     ]
