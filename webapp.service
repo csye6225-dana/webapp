@@ -1,6 +1,6 @@
 [Unit]
 Description=Web Application Service
-
+After=startup-script.Service
 [Service]
 User=csye6225
 Group=csye6225
