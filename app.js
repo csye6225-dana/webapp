@@ -7,7 +7,7 @@ const checkHealthMiddleware = require('./middlewares/checkHealthMiddleware'); //
 const authenticateUser = require('./middlewares/authMiddleware.js');
 const app = express();
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
 
 app.use(bodyParser.json());
 
