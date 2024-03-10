@@ -103,11 +103,6 @@ build {
       "sudo yum install -y nodejs-18.17.0",
       "sudo mkdir -p ${var.app_location}",
       "sudo chown -R csye6225:csye6225 ${var.app_location}",
-      "sudo unzip -o ${var.destination} -d ${var.app_location}",
-      "sudo cp ${var.app_location}/webapp.service /etc/systemd/system/webapp.service",
-      "sudo systemctl daemon-reload",
-      "while [ ! -f ${var.app_location}/signal_file ]; do sleep 1; done", # Wait for signal file
-      "sudo systemctl enable webapp.service"                              # Enable the service
-    ]
+      "sudo unzip -o ${var.destination} -d ${var.app_location}"
   }
 }
