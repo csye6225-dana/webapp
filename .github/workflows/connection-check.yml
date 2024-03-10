@@ -25,6 +25,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-server
+          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}'; FLUSH PRIVILEGES;"
           sudo systemctl start mysql.service
 
       - name: Configure MySQL
@@ -55,20 +56,16 @@ jobs:
 
       - name: Install packages
         run: npm install express sequelize dotenv mysql2 bcrypt basic-auth ci
-      
-      - name: Print PORT secret
-        run: echo ${{ secrets.PORT }}  
-
+        
       - name: Run the app
         run: nohup node app.js &
         env:
-          PORT: ${{ secrets.PORT }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }} 
-          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
-            
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+            DB_NAME: ${{ secrets.DB_NAME }} 
+            MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+            MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+            PORT: ${{ secrets.PORT }}
 
       - name: Check /healthz endpoint
         run: |
