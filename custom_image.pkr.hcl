@@ -106,7 +106,6 @@ build {
       "sudo unzip -o ${var.destination} -d ${var.app_location}",
       "sudo cp ${var.app_location}/webapp.service /etc/systemd/system/webapp.service",
       "sudo systemctl daemon-reload",
-      "sudo systemctl enable webapp.service"
-    ]
+      "sudo systemctl enable webapp.service"                              # Enable the service
   }
 }
