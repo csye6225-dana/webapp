@@ -44,7 +44,13 @@ app.use((err, req, res, next) => {
 
 // Run the server
 const server = app.listen(PORT, process.env.MYSQL_HOST, async () => {
-  await initializeApp();
-  const address = server.address(); // Get the address info
-  console.log(`Server is running on ${address.address}:${address.port}`);
+  try {
+    await initializeApp();
+    const address = server.address(); // Get the address info
+    console.log(`Server is running on ${address.address}:${address.port}`);
+  } catch (error) {
+    console.error("Error during server startup:", error);
+    // Perform cleanup or handle the error as needed
+    process.exit(1); // Exit the process with a non-zero exit code to indicate failure
+  }
 });
