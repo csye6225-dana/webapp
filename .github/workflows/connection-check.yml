@@ -3,7 +3,7 @@ name: Connection Check
 on:
   pull_request_target:
     branches:
-      - master
+      - main
     types: [opened, synchronize]
 
 jobs:
@@ -54,11 +54,12 @@ jobs:
       - name: Run the app
         run: nohup node app.js &
         env:
-            DB_USER: ${{ secrets.DB_USER }}
-            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-            DB_NAME: ${{ secrets.DB_NAME }}
-            MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-            MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+          PORT: ${{ secrets.PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }} 
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
 
       - name: Check /healthz endpoint
         run: |
