@@ -11,7 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
-      MYSQL_DATABASE: ${{ secrets.DB_NAME }}
+      MYSQL_USER: ${{secrets.DB_USER}}
+      MYSQL_PASSWORD: ${{secrets.DB_PASSWORD}}
+      MYSQL_DATABASE: ${{secrets.DB_NAME}}
+      MYSQL_HOST: ${{secrets.MYSQL_HOST}}
+      MYSQL_PORT: ${{secrets.MYSQL_PORT}}
 
     steps:
       - name: Checkout code
@@ -52,14 +56,18 @@ jobs:
       - name: Install packages
         run: npm install express sequelize dotenv mysql2 bcrypt basic-auth ci axios
 
+      - name: Print PORT secret
+        run: echo ${{ secrets.PORT }}  
+
       - name: Run the app
         run: nohup node app.js &
         env:
-            DB_USER: ${{ secrets.DB_USER }}
-            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-            DB_NAME: ${{ secrets.DB_NAME }}
-            MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
-            MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+          PORT: ${{ secrets.PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }} 
+          MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
 
       # Run integration tests
       - name: Run integration test 1
