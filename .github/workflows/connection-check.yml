@@ -11,6 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
+      MYSQL_USER: ${{secrets.DB_USER}}
+      MYSQL_PASSWORD: ${{secrets.DB_PASSWORD}}
+      MYSQL_DATABASE: ${{secrets.DB_NAME}}
+      MYSQL_HOST: ${{secrets.MYSQL_HOST}}
+      MYSQL_PORT: ${{secrets.MYSQL_PORT}}
 
     steps:
       - name: Checkout code
@@ -20,6 +25,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-server
+          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '${MYSQL_ROOT_PASSWORD}'; FLUSH PRIVILEGES;"
           sudo systemctl start mysql.service
 
       - name: Configure MySQL
@@ -27,7 +33,7 @@ jobs:
           MYSQL_ROOT_PASSWORD: ${{ secrets.DB_ROOT_PASSWORD }}
           MYSQL_USER: ${{ secrets.DB_USER }}
           MYSQL_USER_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          MYSQL_DB_NAME: ${{ secrets.DB_NAME }} 
+          MYSQL_DB_NAME: ${{ secrets.DB_NAME }}
         run: |
           sudo mysql -e "CREATE USER ${MYSQL_USER}@'localhost' IDENTIFIED BY '${MYSQL_USER_PASSWORD}';" -p"${MYSQL_ROOT_PASSWORD}"
           sudo mysql -e "CREATE DATABASE ${MYSQL_DB_NAME};" -p"${MYSQL_ROOT_PASSWORD}"
@@ -59,6 +65,7 @@ jobs:
             DB_NAME: ${{ secrets.DB_NAME }} 
             MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
             MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+            PORT: ${{ secrets.PORT }}
 
       - name: Check /healthz endpoint
         run: |
