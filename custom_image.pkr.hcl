@@ -99,17 +99,14 @@ build {
       "sudo groupadd -f csye6225",
       "sudo useradd -r -s /usr/sbin/nologin -g csye6225 csye6225",
       "sudo yum install -y unzip",
-      "curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash",
-      "nvm install 18.17.0",
-      "nvm use 18.17.0",
-      "sudo yum install -y nodejs",
+      "curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash -",
+      "sudo yum install -y nodejs-18.17.0",
       "sudo mkdir -p ${var.app_location}",
       "sudo chown -R csye6225:csye6225 ${var.app_location}",
       "sudo unzip -o ${var.destination} -d ${var.app_location}",
       "sudo cp ${var.app_location}/webapp.service /etc/systemd/system/webapp.service",
       "sudo systemctl daemon-reload",
-      "while [ ! -f ${var.app_location}/signal_file ]; do sleep 1; done", # Wait for signal file
-      "sudo systemctl enable webapp.service" # Enable the service
+      "sudo systemctl enable webapp.service" # Assuming you want to enable the service
     ]
   }
 }
