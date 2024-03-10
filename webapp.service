@@ -1,7 +1,5 @@
 [Unit]
 Description=Web Application Service
-After=network.target google_metadata_script.service
-Requires=google_metadata_script.service
 
 [Service]
 User=csye6225
