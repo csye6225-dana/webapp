@@ -43,7 +43,8 @@ app.use((err, req, res, next) => {
 });
 
 // Run the server
-app.listen(PORT, async () => {
-  console.log(`Server is running on port ${PORT}`);
+const server = app.listen(PORT, process.env.MYSQL_HOST, async () => {
   await initializeApp();
+  const address = server.address(); // Get the address info
+  console.log(`Server is running on ${address.address}:${address.port}`);
 });
