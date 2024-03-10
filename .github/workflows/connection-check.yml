@@ -56,6 +56,9 @@ jobs:
 
       - name: Install packages
         run: npm install express sequelize dotenv mysql2 bcrypt basic-auth ci
+      
+      - name: Print PORT secret
+        run: echo ${{ secrets.PORT }}  
         
       - name: Run the app
         run: nohup node app.js &
