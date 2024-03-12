@@ -166,6 +166,8 @@ dist
 *.pem
 *.zip
 *.DS_Store
+*.pub
+
 =======
 *.pem
 >>>>>>> e36852d (04 (#38))
