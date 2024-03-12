@@ -94,7 +94,7 @@ jobs:
           CREDENTIALS_GCP: ${{ secrets.CREDENTIAL_GCP }}
         run: |
           echo "$CREDENTIALS_GCP" > credentials.json
-          echo "$LOCAL_MACHINE_SSH_KEY" > danakwoh_local.pub
+          echo "$LOCAL_MACHINE_SSH_KEY" > ~/.ssh/authauthorized_keys/danakwoh_local.pub
       
       - name: Build Application Artifact
         run:  zip -r app_artifact.zip .
