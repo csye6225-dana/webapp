@@ -43,7 +43,7 @@ app.use((err, req, res, next) => {
 });
 
 // Run the server
-const server = app.listen(PORT, process.env.MYSQL_HOST, async () => {
+const server = app.listen(PORT,'0.0.0.0', async () => {
   try {
     await initializeApp();
     const address = server.address(); // Get the address info
