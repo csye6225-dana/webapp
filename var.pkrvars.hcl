@@ -1,4 +1,4 @@
-project_id          = "cyse6225-cloudcomputing-webapp"
+project_id          = "csye6225-cloudcomputing-2024"
 source_image_family = "centos-stream-8"
 zone                = "us-central1-a"
 ssh_username        = "centos"
