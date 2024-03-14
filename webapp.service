@@ -7,7 +7,7 @@ ConditionPathExists=/tmp/instance_ready
 User=csye6225
 Group=csye6225
 WorkingDirectory=/opt/csye6225
-ExecStart=/usr/bin/node app.js
+ExecStart=node app.js
 Restart=always
 
 [Install]
