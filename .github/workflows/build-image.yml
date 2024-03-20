@@ -108,7 +108,7 @@ jobs:
             pipelines:
               logs:
                 receivers: [filelog]
-                exporters: [google_cloud_logging]" > ops-agent-config.yaml
+                exporters: [google_cloud_logging]" > ops_agent_config.yaml
       
       - name: Build Application Artifact
         run:  zip -r app_artifact.zip .
