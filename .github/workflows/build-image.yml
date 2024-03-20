@@ -96,6 +96,20 @@ jobs:
           echo "$CREDENTIALS_GCP" > credentials.json
           echo "$LOCAL_MACHINE_SSH_KEY" > danakwoh_local.pub
       
+      - name: Stream Application Log Data to Cloud Logging
+        run: |
+          echo "receivers:
+            filelog:
+              files:
+                - /opt/csye6225/combined.log
+          exporters:
+            google_cloud_logging:
+          service:
+            pipelines:
+              logs:
+                receivers: [filelog]
+                exporters: [google_cloud_logging]" > ops-agent-config.yaml
+      
       - name: Build Application Artifact
         run:  zip -r app_artifact.zip .
         working-directory: ${{ github.workspace }}
