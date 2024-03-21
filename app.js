@@ -5,7 +5,7 @@ const healthRouter = require('./routes/healthRouters.js');
 const userRouter = require('./routes/userRouters.js');
 const checkHealthMiddleware = require('./middlewares/checkHealthMiddleware'); 
 const authenticateUser = require('./middlewares/authMiddleware.js');
-const winston = require('winston'); 
+const Logger = require('node-json-logger');
 
 const app = express();
 
@@ -13,22 +13,15 @@ const PORT = process.env.PORT;
 
 app.use(bodyParser.json());
 
-// Initialize winston logger
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(), // Format logs in JSON
-  transports: [
-    new winston.transports.Console(), // Log to console
-    new winston.transports.File({ filename: 'combined.log' }) // Log to a file
-  ]
-});
+// Create a logger instance
+const logger = new Logger();
 
 // Initializing 
 const initializeApp = async () => {
   try {
     // Bootstrap the database
     await bootstrap.sync({ alter: true });
-    logger.info('Bootstrap the Database successfully!'); // Log initialization success
+    logger.info('Bootstrap the Database successfully!!'); // Log initialization success
   } catch (error) {
     logger.error(`Error initializing app: ${error.message}`); // Log initialization error
   }
@@ -49,7 +42,7 @@ app.use('/v1/user', (req, res, next) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  logger.error(`Error: ${err.message}`); // Log error
+  logger.error({ message: err.message, stack: err.stack }); // Log error with stack trace
   res.status(err.status).json({ error: err.message });
 });
 

@@ -103,16 +103,14 @@ build {
       "sudo yum install -y nodejs-18.17.0",
       "curl -sSO https://dl.google.com/cloudagents/add-google-cloud-ops-agent-repo.sh",
       "sudo bash add-google-cloud-ops-agent-repo.sh --also-install",
-      "sudo apt-get install -y ops-agent",
       "sudo mkdir -p ${var.app_location}",
       "sudo chown -R csye6225:csye6225 ${var.app_location}",
       "sudo unzip -o ${var.destination} -d ${var.app_location}",
       "sudo cp ${var.app_location}/webapp.service /etc/systemd/system/webapp.service",
-      "sudo cp ${var.app_location}/ops_agent_config.yaml /etc/google-cloud/ops-agent/ops_agent_config.yaml",
+      "sudo cp ${var.app_location}/ops_agent_config.yaml /etc/google-cloud-ops-agent/ops_agent_config.yaml",
+      "sudo systemctl restart google-cloud-ops-agent",
       "sudo systemctl daemon-reload",
-      "sudo systemctl enable webapp.service",
-      "sudo service ops-agent start",
-      "sudo systemctl enable ops-agent"
+      "sudo systemctl enable webapp.service" 
     ]
   }
 }
