@@ -48,7 +48,7 @@ jobs:
         run: npm init -y
         
       - name: Install packages
-        run: npm install express sequelize dotenv mysql2 bcrypt basic-auth ci axios
+        run: npm install express sequelize dotenv mysql2 bcrypt basic-auth ci axios node-json-logger
 
       - name: Run the app
         run: nohup node app.js &
@@ -95,20 +95,6 @@ jobs:
         run: |
           echo "$CREDENTIALS_GCP" > credentials.json
           echo "$LOCAL_MACHINE_SSH_KEY" > danakwoh_local.pub
-      
-      - name: Stream Application Log Data to Cloud Logging
-        run: |
-          echo "receivers:
-            filelog:
-              files:
-                - /opt/csye6225/combined.log
-          exporters:
-            google_cloud_logging:
-          service:
-            pipelines:
-              logs:
-                receivers: [filelog]
-                exporters: [google_cloud_logging]" > ops_agent_config.yaml
       
       - name: Build Application Artifact
         run:  zip -r app_artifact.zip .
