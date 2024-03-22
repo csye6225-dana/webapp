@@ -3,7 +3,7 @@ logging:
     my-app-receiver:
       type: files
       include_paths:
-        - /tmp/myapp.log
+        - /var/log/google-cloud-ops-agent/subagents/*.log
       record_log_file_path: true
   processors:
     my-app-processor:
@@ -15,3 +15,17 @@ logging:
       default_pipeline:
         receivers: [my-app-receiver]
         processors: [my-app-processor]
+monitoring:
+  monitoring_enabled: true
+  logging_metrics_enabled: true
+  metrics:
+    - type: compute.googleapis.com/instance/disk/write_bytes_count
+      resource_type: gce_instance
+      labels:
+        - key: instance_name
+          value: web-server
+    - type: compute.googleapis.com/instance/disk/read_bytes_count
+      resource_type: gce_instance
+      labels:
+        - key: instance_name
+          value: web-server
