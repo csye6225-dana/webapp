@@ -108,9 +108,9 @@ build {
       "sudo unzip -o ${var.destination} -d ${var.app_location}",
       "sudo cp ${var.app_location}/webapp.service /etc/systemd/system/webapp.service",
       "sudo cp ${var.app_location}/ops_agent_config.yaml /etc/google-cloud-ops-agent/config.yaml",
-      "sudo service ops-agent start",
-      "sudo systemctl enable ops-agent",
       "sudo systemctl daemon-reload",
+      "sudo systemctl enable ops-agent",
+      "sudo service ops-agent start",
       "sudo systemctl enable webapp.service"
     ]
   }
