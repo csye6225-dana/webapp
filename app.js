@@ -5,7 +5,7 @@ const healthRouter = require('./routes/healthRouters.js');
 const userRouter = require('./routes/userRouters.js');
 const checkHealthMiddleware = require('./middlewares/checkHealthMiddleware'); 
 const authenticateUser = require('./middlewares/authMiddleware.js');
-const { Logger } = require('node-json-logger');
+const Logger = require('node-json-logger');
 
 const app = express();
 
@@ -25,25 +25,6 @@ const logger = new Logger({
     default: {
       appenders: ['file'],
       level: 'info'
-    }
-  }
-});
-
-// Set up log file path
-const logFilePath = '/tmp/myapp.log';
-
-// Initialize log file
-logger.init({
-  'appenders': {
-    'file': {
-      'type': 'file',
-      'filename': logFilePath
-    }
-  },
-  'categories': {
-    'default': {
-      'appenders': ['file'],
-      'level': 'info'
     }
   }
 });
