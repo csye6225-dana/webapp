@@ -107,10 +107,10 @@ build {
       "sudo chown -R csye6225:csye6225 ${var.app_location}",
       "sudo unzip -o ${var.destination} -d ${var.app_location}",
       "sudo cp ${var.app_location}/webapp.service /etc/systemd/system/webapp.service",
-      "sudo cp ${var.app_location}/ops_agent_config.yaml /etc/google-cloud-ops-agent/config.yaml",
-      "sudo systemctl daemon-reload",
+      "sudo cp ${var.app_location}/ops_agent_config.yaml /etc/google-cloud-ops-agent/ops_agent_config.yaml",
       "sudo systemctl restart google-cloud-ops-agent",
-      "sudo systemctl enable webapp.service"
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable webapp.service" 
     ]
   }
 }
