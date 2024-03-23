@@ -52,7 +52,7 @@ const updateUser = async (req, res) => {
   const invalidFields = receivedFields.filter(field => !allowedFields.includes(field));
 
   if (invalidFields.length > 0) {
-    logger.debug(`Invalid field(s) for update: ${invalidFields.join(', ')}`); // Log error for invalid fields
+    logger.error(`Invalid field(s) for update: ${invalidFields.join(', ')}`); // Log error for invalid fields
     return res.status(400).json({ error: `Invalid field(s): ${invalidFields.join(', ')}` });
   }
 
@@ -90,7 +90,7 @@ const updateUser = async (req, res) => {
 
 const getUser = async (req, res) => {
   if (Object.keys(req.body).length > 0) {
-    logger.debug('No body payload allowed'); // Log error for invalid request
+    logger.error('No body payload allowed'); // Log error for invalid request
     return res.status(400).json({ error: 'No body payload allowed' });
   }
   try {

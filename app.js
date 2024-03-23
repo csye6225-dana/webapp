@@ -23,7 +23,7 @@ if (!fs.existsSync(logFilePath)) {
     fs.writeFileSync(logFilePath, ''); // Create an empty file
     console.log('Log file created successfully');
   } catch (error) {
-    console.debug('Error creating log file:', error);
+    console.error('Error creating log file:', error);
     // Handle error accordingly
   }
 }
@@ -36,11 +36,7 @@ const logger = new Logger({
       filename: logFilePath,
       layout: {
         type: 'json',
-        'json-layout': true, // Enable JSON layout
-        timestamp: (logEvent) => {
-          // Customize timestamp format
-          return dateFormat(new Date(logEvent.startTime), "yyyy-mm-dd'T'HH:MM:ss.l'Z'");
-        }
+        'json-layout': true // Enable JSON layout
       }
     }
   },
@@ -59,7 +55,7 @@ const initializeApp = async () => {
     await bootstrap.sync({ alter: true });
     logger.info('Bootstrap the Database successfully!!'); // Log initialization success
   } catch (error) {
-    logger.debug(`Error initializing app: ${error.message}`); // Log initialization error
+    logger.error(`Error initializing app: ${error.message}`); // Log initialization error
   }
 };
 
