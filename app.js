@@ -6,6 +6,7 @@ const userRouter = require('./routes/userRouters.js');
 const checkHealthMiddleware = require('./middlewares/checkHealthMiddleware'); 
 const authenticateUser = require('./middlewares/authMiddleware.js');
 const Logger = require('node-json-logger');
+const fs = require('fs');
 
 const app = express();
 
@@ -13,12 +14,30 @@ const PORT = process.env.PORT;
 
 app.use(bodyParser.json());
 
+// Log file path
+const logFilePath = '/tmp/myapp.log';
+
+// Check if log file exists, create it if it doesn't
+if (!fs.existsSync(logFilePath)) {
+  try {
+    fs.writeFileSync(logFilePath, ''); // Create an empty file
+    console.log('Log file created successfully');
+  } catch (error) {
+    console.error('Error creating log file:', error);
+    // Handle error accordingly
+  }
+}
+
 // Create a logger instance
 const logger = new Logger({
   appenders: {
     file: {
       type: 'file',
-      filename: '/tmp/myapp.log'
+      filename: logFilePath,
+      layout: {
+        type: 'json',
+        'json-layout': true // Enable JSON layout
+      }
     }
   },
   categories: {
@@ -63,7 +82,6 @@ app.use((err, req, res, next) => {
 const server = app.listen(PORT, '0.0.0.0', async () => {
   try {
     await initializeApp();
-    const address = server.address(); // Get the address info
     logger.info(`Running on the port: ${PORT}`); // Log server startup
   } catch (error) {
     logger.error(`Error during server startup: ${error.message}`); // Log server startup error
