@@ -111,7 +111,7 @@ build {
       "sudo service ops-agent start",
       "sudo systemctl enable ops-agent",
       "sudo systemctl daemon-reload",
-      "sudo systemctl enable webapp.service" 
+      "sudo systemctl enable webapp.service"
     ]
   }
 }
