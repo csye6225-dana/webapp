@@ -36,7 +36,11 @@ const logger = new Logger({
       filename: logFilePath,
       layout: {
         type: 'json',
-        'json-layout': true // Enable JSON layout
+        'json-layout': true, // Enable JSON layout
+        timestamp: (logEvent) => {
+          // Customize timestamp format
+          return dateFormat(new Date(logEvent.startTime), "yyyy-mm-dd'T'HH:MM:ss.l'Z'");
+        }
       }
     }
   },
