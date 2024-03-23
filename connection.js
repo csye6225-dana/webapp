@@ -8,8 +8,17 @@ const sequelize = new Sequelize(
   {
     host: process.env.MYSQL_HOST,
     port: process.env.MYSQL_PORT,
-    dialect: 'mysql'
+    dialect: 'mysql',
+    logging: (message) => {
+      const logEntry = {
+        timestamp: new Date().toISOString(),
+        level: 'warn', // You can adjust the level based on your requirements
+        message: message
+      };
+      console.log(JSON.stringify(logEntry));
+    }
   }
 );
 
 module.exports = sequelize;
+

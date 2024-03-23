@@ -1,6 +1,23 @@
-const DataTypes = require('sequelize');
+const Logger = require('node-json-logger');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../connection');
 const bcrypt = require('bcrypt');
+
+// Create a logger instance
+const logger = new Logger({
+  appenders: {
+    file: {
+      type: 'file',
+      filename: '/tmp/myapp.log'
+    }
+  },
+  categories: {
+    default: {
+      appenders: ['file'],
+      level: 'info'
+    }
+  }
+});
 
 // Define User table
 const User = sequelize.define('User', {
@@ -47,13 +64,16 @@ User.createUser = async function(userData) {
     userData.password = hashedPassword;
     const newUser = await User.create(userData);
 
-    // exclude write-only in JSON output
+    // Log user creation info
+    logger.info(`User ${newUser.username} created successfully`);
+
+    // Exclude write-only fields in JSON output
     const otherInfo = Object.assign({}, newUser.get());
     delete otherInfo.password;
     return otherInfo;
-      
-    //return error;
   } catch (error) {
+    // Log error creating user with stack trace
+    logger.error('Error creating user:', error);
     throw new Error('Error creating user: ' + error.message);
   }
 };
@@ -61,7 +81,6 @@ User.createUser = async function(userData) {
 // Validate a password
 User.prototype.validPWD = async function(password){
   return await bcrypt.compare(password, this.password);
-;}
-
+};
 
 module.exports = User;
