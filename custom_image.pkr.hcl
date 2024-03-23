@@ -110,7 +110,7 @@ build {
       "sudo cp ${var.app_location}/ops_agent_config.yaml /etc/google-cloud-ops-agent/config.yaml",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ops-agent",
-      "sudo systemctl restart google-cloud-ops-agent",
+      "sudo service ops-agent start",
       "sudo systemctl enable webapp.service"
     ]
   }
