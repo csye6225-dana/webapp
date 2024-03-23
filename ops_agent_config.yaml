@@ -3,7 +3,7 @@ logging:
     my-app-receiver:
       type: files
       include_paths:
-        - /var/log/google-cloud-ops-agent/subagents/*.log
+        - /tmp/myapp.log
       record_log_file_path: true
   processors:
     my-app-processor:
