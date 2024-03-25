@@ -23,7 +23,7 @@ if (!fs.existsSync(logFilePath)) {
     fs.writeFileSync(logFilePath, ''); // Create an empty file
     console.log('Log file created successfully');
   } catch (error) {
-    console.error('Error creating log file:', error);
+    console.debug('Error creating log file:', error);
     // Handle error accordingly
   }
 }
@@ -59,7 +59,7 @@ const initializeApp = async () => {
     await bootstrap.sync({ alter: true });
     logger.info('Bootstrap the Database successfully!!'); // Log initialization success
   } catch (error) {
-    logger.error(`Error initializing app: ${error.message}`); // Log initialization error
+    logger.debug(`Error initializing app: ${error.message}`); // Log initialization error
   }
 };
 
