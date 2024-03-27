@@ -10,11 +10,19 @@ logging:
       type: parse_json
       time_key: time
       time_format: "%Y-%m-%dT%H:%M:%S.%L%Z"
+    node-json-logger-processor:
+      type: parse_json
+      time_key: time
+      time_format: "%Y-%m-%dT%H:%M:%S.%L%Z"  # Adjust the time format as needed
   service:
     pipelines:
       default_pipeline:
         receivers: [my-app-receiver]
         processors: [my-app-processor]
+      node-json-logger-pipeline:
+        receivers: [my-app-receiver]  # Assuming my-app-receiver is still used
+        processors: [node-json-logger-processor]
+
 monitoring:
   monitoring_enabled: true
   logging_metrics_enabled: true
