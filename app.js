@@ -15,7 +15,7 @@ const PORT = process.env.PORT;
 app.use(bodyParser.json());
 
 // Define log file path
-const logFilePath = '/csye6225/myapp.log';
+const logFilePath = '/opt/csye6225/myapp.log';
 
 // Create a new logger instance
 const logger = new Logger();
@@ -50,13 +50,35 @@ function writeToLogFile(level, message) {
 
 // Function to write log messages to Google Cloud Logging
 async function writeToCloudLogging(level, message) {
+  let severity;
+  switch (level) {
+    case 'debug':
+      severity = 'DEBUG';
+      break;
+    case 'info':
+      severity = 'INFO';
+      break;
+    case 'warning':
+      severity = 'WARNING';
+      break;
+    case 'error':
+      severity = 'ERROR';
+      break;
+    case 'critical':
+      severity = 'CRITICAL';
+      break;
+    default:
+      severity = 'DEFAULT';
+  }
+
   try {
     // Write log entry to Cloud Logging
-    await cloudLog.write({ severity: level, message: message });
+    await cloudLog.write({ severity: severity, message: message });
   } catch (error) {
     console.error('Error writing to Google Cloud Logging:', error);
   }
 }
+
 // Initializing 
 const initializeApp = async () => {
   try {
