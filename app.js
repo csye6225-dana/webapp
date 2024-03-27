@@ -5,18 +5,26 @@ const healthRouter = require('./routes/healthRouters.js');
 const userRouter = require('./routes/userRouters.js');
 const checkHealthMiddleware = require('./middlewares/checkHealthMiddleware'); 
 const authenticateUser = require('./middlewares/authMiddleware.js');
+const { Logging } = require('@google-cloud/logging');
 const Logger = require('node-json-logger');
 const fs = require('fs');
-const { timeStamp } = require('console');
 
 const app = express();
-
 const PORT = process.env.PORT;
 
 app.use(bodyParser.json());
 
-// Log file path
-const logFilePath = '/tmp/myapp.log';
+// Define log file path
+const logFilePath = '/csye6225/myapp.log';
+
+// Create a new logger instance
+const logger = new Logger();
+
+// Initialize Google Cloud Logging client
+const logging = new Logging({keyFilename:'credentials.json'});
+
+// Create a log entry using the Cloud Logging client
+const cloudLog = logging.log('myapp-log');
 
 // Check if log file exists, create it if it doesn't
 if (!fs.existsSync(logFilePath)) {
@@ -29,26 +37,40 @@ if (!fs.existsSync(logFilePath)) {
   }
 }
 
-// Create a logger instance
-logger.config({
-  type: 'json',
-  logFilePath: logFilePath,
-  logToConsole: true,
-  timeStamp: (logEvent) => {
-    return dateFormat(new Date(logEvent.startTime), "yyyy-mm-dd'T'HH:MM:ss.l'Z'");
-  }
-})
-
 // Initializing 
 const initializeApp = async () => {
   try {
     // Bootstrap the database
     await bootstrap.sync({ alter: true });
     logger.info('Bootstrap the Database successfully!!'); // Log initialization success
+    writeToCloudLogging('Bootstrap the Database successfully!!');
   } catch (error) {
     logger.debug(`Error initializing app: ${error.message}`); // Log initialization error
+    writeToCloudLogging(`Error initializing app: ${error.message}`);
   }
 };
+
+// Function to write log messages to the file
+function writeToLogFile(message) {
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] ${message}\n`;
+
+  try {
+    fs.appendFileSync(logFilePath, logEntry); // Append to file
+  } catch (error) {
+    console.error('Error writing to log file:', error);
+  }
+}
+
+// Function to write log messages to Google Cloud Logging
+async function writeToCloudLogging(message) {
+  try {
+    // Write log entry to Cloud Logging
+    await cloudLog.write({ severity: 'info', message: message });
+  } catch (error) {
+    console.error('Error writing to Google Cloud Logging:', error);
+  }
+}
 
 // Attach health router with health check middleware
 app.use('/healthz', checkHealthMiddleware, healthRouter);
@@ -65,8 +87,11 @@ app.use('/v1/user', (req, res, next) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  logger.error({ message: err.message, stack: err.stack }); // Log error with stack trace
-  res.status(err.status).json({ error: err.message });
+  const errorMessage = `[ERROR] ${err.message}\n${err.stack}`;
+  logger.error(errorMessage); // Log error with stack trace
+  writeToLogFile(errorMessage);
+  writeToCloudLogging(errorMessage);
+  res.status(err.status || 500).json({ error: err.message });
 });
 
 // Run the server
@@ -74,8 +99,12 @@ const server = app.listen(PORT, '0.0.0.0', async () => {
   try {
     await initializeApp();
     logger.info(`Running on the port: ${PORT}`); // Log server startup
+    writeToCloudLogging(`Running on the port: ${PORT}`);
   } catch (error) {
-    logger.error(`Error during server startup: ${error.message}`); // Log server startup error
+    const errorMessage = `Error during server startup: ${error.message}`;
+    logger.error(errorMessage); // Log server startup error
+    writeToLogFile(errorMessage);
+    writeToCloudLogging(errorMessage);
     process.exit(1);
   }
 });
