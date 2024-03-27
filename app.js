@@ -7,6 +7,7 @@ const checkHealthMiddleware = require('./middlewares/checkHealthMiddleware');
 const authenticateUser = require('./middlewares/authMiddleware.js');
 const Logger = require('node-json-logger');
 const fs = require('fs');
+const { timeStamp } = require('console');
 
 const app = express();
 
@@ -29,28 +30,14 @@ if (!fs.existsSync(logFilePath)) {
 }
 
 // Create a logger instance
-const logger = new Logger({
-  appenders: {
-    file: {
-      type: 'file',
-      filename: logFilePath,
-      layout: {
-        type: 'json',
-        'json-layout': true, // Enable JSON layout
-        timestamp: (logEvent) => {
-          // Customize timestamp format
-          return dateFormat(new Date(logEvent.startTime), "yyyy-mm-dd'T'HH:MM:ss.l'Z'");
-        }
-      }
-    }
-  },
-  categories: {
-    default: {
-      appenders: ['file'],
-      level: 'info'
-    }
+logger.config({
+  type: 'json',
+  logFilePath: logFilePath,
+  logToConsole: true,
+  timeStamp: (logEvent) => {
+    return dateFormat(new Date(logEvent.startTime), "yyyy-mm-dd'T'HH:MM:ss.l'Z'");
   }
-});
+})
 
 // Initializing 
 const initializeApp = async () => {
