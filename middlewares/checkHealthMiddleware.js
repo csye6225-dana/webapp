@@ -1,11 +1,15 @@
 const Logger = require('node-json-logger');
+const { Logging } = require('@google-cloud/logging');
 
-// Create a logger instance
-const logger = new Logger({
+// Initialize Google Cloud Logging client
+const logging = new Logging({ keyFilename: 'credentials.json' });
+
+// Create a logger instance for file logging
+const fileLogger = new Logger({
   appenders: {
     file: {
       type: 'file',
-      filename: '/tmp/myapp.log'
+      filename: '/opt/csye6225/myapp.log'
     }
   },
   categories: {
@@ -16,18 +20,55 @@ const logger = new Logger({
   }
 });
 
+// Create a logger instance for Google Cloud Logging
+const cloudLog = logging.log('myapp-log');
+
+// Function to write log messages to Google Cloud Logging
+async function writeToCloudLogging(level, message) {
+  let severity;
+  switch (level) {
+    case 'debug':
+      severity = 'DEBUG';
+      break;
+    case 'info':
+      severity = 'INFO';
+      break;
+    case 'warning':
+      severity = 'WARNING';
+      break;
+    case 'error':
+      severity = 'ERROR';
+      break;
+    case 'critical':
+      severity = 'CRITICAL';
+      break;
+    default:
+      severity = 'DEFAULT';
+  }
+
+  try {
+    // Write log entry to Cloud Logging
+    await cloudLog.write({ severity: severity, message: message });
+  } catch (error) {
+    console.error('Error writing to Google Cloud Logging:', error);
+  }
+}
+
 const checkHealthMiddleware = (req, res, next) => {
   if (req.method !== 'GET') {
-    logger.error(`Method Not Allowed: ${req.method}`); // Log error for Method Not Allowed
+    fileLogger.error(`Method Not Allowed: ${req.method}`); // Log error for Method Not Allowed
+    writeToCloudLogging('error', `Method Not Allowed: ${req.method}`); // Log to Google Cloud Logging
     return res.status(405).header('Cache-Control', 'no-cache').send(); // Method Not Allowed
   }
   if (Object.keys(req.body).length > 0 || Object.keys(req.query).length > 0) {
-    logger.error('Bad Request: Request contains body or parameters'); // Log error for Bad Request
+    fileLogger.error('Bad Request: Request contains body or parameters'); // Log error for Bad Request
+    writeToCloudLogging('error', 'Bad Request: Request contains body or parameters'); // Log to Google Cloud Logging
     return res.status(400).header('Cache-Control', 'no-cache').send(); // Bad Request
   }
 
   // Log health check success
-  logger.info('Health check passed successfully');
+  fileLogger.info('Health check passed successfully');
+  writeToCloudLogging('info', 'Health check passed successfully'); // Log to Google Cloud Logging
   
   next();
 };
