@@ -1,6 +1,5 @@
 const Logger = require('node-json-logger');
 const { Logging } = require('@google-cloud/logging');
-const Sequelize = require('sequelize'); // Import Sequelize
 const sequelize = require('../connection');
 
 // Initialize Google Cloud Logging client
