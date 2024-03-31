@@ -1,61 +1,8 @@
-const Logger = require('node-json-logger');
 const { DataTypes } = require('sequelize');
-const { Logging } = require('@google-cloud/logging');
 const sequelize = require('../connection');
 const bcrypt = require('bcrypt');
+const { writeToCloudLogging, writeToLogFile } = require('../logger');
 
-// Initialize Google Cloud Logging client
-const logging = new Logging({ keyFilename: 'credentials.json' });
-
-// Create a logger instance for file logging
-const fileLogger = new Logger({
-  appenders: {
-    file: {
-      type: 'file',
-      filename: '/tmp/myapp.log'
-    }
-  },
-  categories: {
-    default: {
-      appenders: ['file'],
-      level: 'info'
-    }
-  }
-});
-
-// Create a logger instance for Google Cloud Logging
-const cloudLog = logging.log('myapp-log');
-
-// Function to write log messages to Google Cloud Logging
-async function writeToCloudLogging(level, message) {
-  let severity;
-  switch (level) {
-    case 'debug':
-      severity = 'DEBUG';
-      break;
-    case 'info':
-      severity = 'INFO';
-      break;
-    case 'warning':
-      severity = 'WARNING';
-      break;
-    case 'error':
-      severity = 'ERROR';
-      break;
-    case 'critical':
-      severity = 'CRITICAL';
-      break;
-    default:
-      severity = 'DEFAULT';
-  }
-
-  try {
-    // Write log entry to Cloud Logging
-    await cloudLog.write({ severity: severity, message: message });
-  } catch (error) {
-    console.error('Error writing to Google Cloud Logging:', error);
-  }
-}
 
 // Create User table
 const User = sequelize.define('User', {
@@ -103,7 +50,7 @@ User.createUser = async function (userData) {
     const newUser = await User.create(userData);
 
     // Log user creation info to file and Google Cloud Logging
-    fileLogger.info(`User ${newUser.username} created successfully`);
+    writeToLogFile('info',`User ${newUser.username} created successfully`);
     writeToCloudLogging('info', `User ${newUser.username} created successfully`);
 
     // Exclude write-only fields in JSON output
@@ -112,7 +59,7 @@ User.createUser = async function (userData) {
     return otherInfo;
   } catch (error) {
     // Log error creating user with stack trace to file and Google Cloud Logging
-    fileLogger.error('Error creating user:', error);
+    writeToLogFile('error','Error creating user:', error);
     writeToCloudLogging('error', `Error creating user: ${error.message}`);
     throw new Error('Error creating user: ' + error.message);
   }
