@@ -12,7 +12,7 @@ const fileLogger = new Logger({
   appenders: {
     file: {
       type: 'file',
-      filename: '/opt/csye6225/myapp.log'
+      filename: '/tmp/myapp.log'
     }
   },
   categories: {

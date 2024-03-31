@@ -58,7 +58,7 @@ const checkHealthMiddleware = (req, res, next) => {
   if (req.method !== 'GET') {
     fileLogger.error(`Method Not Allowed: ${req.method}`); // Log error for Method Not Allowed
     writeToCloudLogging('error', `Method Not Allowed: ${req.method}`); // Log to Google Cloud Logging
-    return res.status(405).header('Cache-Control', 'no-cache').send(); // Method Not Allowed
+    return res.status(404).header('Cache-Control', 'no-cache').send(); // Method Not Allowed
   }
   if (Object.keys(req.body).length > 0 || Object.keys(req.query).length > 0) {
     fileLogger.error('Bad Request: Request contains body or parameters'); // Log error for Bad Request
