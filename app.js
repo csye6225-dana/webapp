@@ -53,7 +53,7 @@ const server = app.listen(PORT, '0.0.0.0', async () => {
     const address = server.address(); // Get the address info
     logger.info(`Running on the port: ${PORT}`); // Log server startup
   } catch (error) {
-    logger.error(`Error during server startup: ${error.message}`); // Log server startup error
+    logger.error(`Error during server startup: ${error.message}`);
     process.exit(1);
   }
 });
