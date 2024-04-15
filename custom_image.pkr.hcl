@@ -110,7 +110,8 @@ build {
       "sudo cp ${var.app_location}/ops_agent_config.yaml /etc/google-cloud-ops-agent/ops_agent_config.yaml",
       "sudo systemctl restart google-cloud-ops-agent",
       "sudo systemctl daemon-reload",
-      "sudo systemctl enable webapp.service"
+      "sudo systemctl enable webapp.service",
+      "echo '${googlecompute.centos_stream_8.image_id}' > image_id.txt"
     ]
   }
 }
