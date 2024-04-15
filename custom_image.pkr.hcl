@@ -111,7 +111,7 @@ build {
       "sudo systemctl restart google-cloud-ops-agent",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable webapp.service",
-      "echo '${googlecompute.centos_stream_8.image_id}' > image_id.txt"
+      "echo '${source.googlecompute.centos_stream_8.image_id}' > image_id.txt"
     ]
   }
 }
